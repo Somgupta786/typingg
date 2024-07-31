@@ -104,7 +104,7 @@ const Page = () => {
   return (
     <ThemeProvider theme={theme}>
       <form
-        className="flex flex-col items-center gap-6 h-fit w-fit mb-20"
+        className="flex flex-col items-center gap-6 h-fit w-fit mb-20 md1:w-full 1xl:w-[30%]  flex-shrink-[0.3]"
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col gap-2 leading-9">
@@ -118,10 +118,10 @@ const Page = () => {
             Enter your email address to reset <br /> your password.
           </div>
         </div>
-        <div className="w-fit flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-8">
           <Box
             sx={{
-              "& > :not(style)": { width: "400px", display: "flex" },
+              "& > :not(style)": {  display: "flex" },
             }}
             noValidate
             autoComplete="off"

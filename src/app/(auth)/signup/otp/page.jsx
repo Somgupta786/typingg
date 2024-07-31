@@ -95,7 +95,7 @@ const Page = () => {
   return (
     <ThemeProvider theme={theme}>
       <form
-        className="flex flex-col items-center gap-8 h-fit w-fit mb-20 md1:w-full"
+        className="flex flex-col items-center gap-8 h-fit w-fit mb-60 md1:w-full 1xl:w-[30%]"
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col gap-4 leading-9">
@@ -133,7 +133,7 @@ const Page = () => {
           </button>
         </div>
         <div
-          className={`px-6 py-3 bg-Primary font-bold text-[18px] text-black w-[100%] max-w-[400px] text-center rounded-lg ${
+          className={`px-6 py-3 bg-Primary font-bold text-[18px] text-black w-[100%] text-center rounded-lg ${
             isOtpFilled && !loading ? "brightness-100" : "brightness-50"
           }`}
         >
@@ -146,7 +146,7 @@ const Page = () => {
           </button>
         </div>
         <div
-          className={`px-6 py-3 mt-2 bg-[#0A0A0A] font-bold text-[18px] text-black w-[100%] max-w-[400px] border-[0.5px] border-white text-center rounded-lg ${
+          className={`px-6 py-3 mt-2 bg-[#0A0A0A] font-bold text-[18px] text-black w-[100%] border-[0.5px] border-white text-center rounded-lg ${
             isOtpEntered ? "brightness-100" : "brightness-50"
           }`}
         >

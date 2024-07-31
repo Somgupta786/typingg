@@ -95,8 +95,8 @@ const Page = () => {
         password: "",
         confirmPassword: "",
       });
-      cookie.set("email",inputs.email)
-      cookie.set("password",inputs.password)
+      cookie.set("email",inputs.email);
+      cookie.set("password",inputs.password);
       router.push(`/signup/username`);
     }
   };
@@ -105,19 +105,19 @@ const Page = () => {
     <ThemeProvider theme={theme}>
       <form
         onSubmit={submitHandler}
-        className="flex flex-col items-center gap-6 h-fit w-fit mb-20 md1:w-full  flex-shrink-[0.3]"
+        className="flex flex-col items-center gap-6 h-fit w-fit mb-20 md1:w-full 1xl:w-[30%]  flex-shrink-[0.3]"
       >
         <div className="flex flex-col gap-2 leading-9">
           <div className="self-center">
             <img src="/icon.svg" alt="icon" />
           </div>
-          <div className="self-center">Welcome back!</div>
-          <div className="text-[#B0B0B0] leading-5 text-[13px] text-center">
+          <div className="self-center text-[25px]">Welcome back!</div>
+          <div className="text-[#B0B0B0] leading-5 text-[15px] text-center">
             Already a user?{" "}
-            <span onClick={()=>router.push("/login")} className="text-Primary underline cursor-pointer">Login</span>
+            <span onClick={() => router.push("/login")} className="text-Primary underline cursor-pointer">Login</span>
           </div>
         </div>
-        <div className="w-fit flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-8">
           <Box
             sx={{
               "& > :not(style)": {  display: "flex" },
@@ -151,8 +151,8 @@ const Page = () => {
                   borderColor: "red",
                 },
                 "& .MuiFormHelperText-root": {
-                  height: "0px", // Set a fixed height for the helper text
-                  visibility: errors.email ? "visible" : "hidden", // Control visibility
+                  height: "0px",
+                  visibility: errors.email ? "visible" : "hidden",
                 },
               }}
             />
@@ -180,8 +180,8 @@ const Page = () => {
                   borderColor: "red",
                 },
                 "& .MuiFormHelperText-root": {
-                  height: "0px", // Set a fixed height for the helper text
-                  visibility: errors.password ? "visible" : "hidden", // Control visibility
+                  height: "0px",
+                  visibility: errors.password ? "visible" : "hidden",
                 },
               }}
               InputProps={{
@@ -227,13 +227,13 @@ const Page = () => {
                   borderColor: "red",
                 },
                 "& .MuiFormHelperText-root": {
-                  height: "0px", // Set a fixed height for the helper text
-                  visibility: errors.confirmPassword ? "visible" : "hidden", // Control visibility
+                  height: "0px",
+                  visibility: errors.confirmPassword ? "visible" : "hidden",
                 },
               }}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">
+                  <InputAdornment position="end" sx={{ pr: 0 }}>
                     <IconButton
                       aria-label="toggle password visibility"
                       onClick={() =>
@@ -276,17 +276,16 @@ const Page = () => {
                 typography: {
                   sx: {
                     "& .MuiFormControlLabel-asterisk": {
-                      display: "none", // Hide the asterisk
+                      display: "none",
                     },
                   },
                 },
               }}
             />
-            
           </div>
         </div>
         <div
-          className={`px-6 py-3 bg-Primary font-bold text-[24px] text-black w-[100%] max-w-[400px] text-center rounded-lg ${
+          className={`px-6 py-3 bg-Primary font-bold text-[24px] text-black w-[100%]  text-center rounded-lg ${
             isFormValid ? "brightness-100" : "brightness-50"
           }`}
         >
@@ -309,7 +308,7 @@ const Page = () => {
           <div>
             <img src="/face.svg" alt="Facebook" />
           </div>
-          <div className=" cursor-pointer">
+          <div className="cursor-pointer">
             <img src="/goo.svg" alt="Google" />
           </div>
           <div>

@@ -59,7 +59,7 @@ const Page = () => {
     <ThemeProvider theme={theme}>
       <form
         onSubmit={submitHandler}
-        className="flex flex-col items-center gap-6 h-fit w-fit mb-20"
+        className="flex flex-col items-center gap-6 h-fit  mb-20 md1:w-full w-[30%] min-w-[370px] sm:min-w-0  flex-shrink-[3]"
       >
         <div className="flex flex-col gap-2 leading-9">
           <div className="self-center">
@@ -72,10 +72,10 @@ const Page = () => {
             Enter your email address to reset <br /> your password.
           </div>
         </div>
-        <div className="w-fit flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-8">
           <Box
             sx={{
-              "& > :not(style)": { width: "400px", display: "flex" },
+              "& > :not(style)": { display: "flex" },
             }}
             noValidate
             autoComplete="off"

@@ -97,7 +97,7 @@ const Page = () => {
   return (
     <ThemeProvider theme={theme}>
       <form
-        className="flex flex-col items-center gap-8 h-fit w-fit mb-20"
+        className="flex flex-col items-center gap-8 h-fit w-fit mb-60 md1:w-full 1xl:w-[30%]"
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col gap-4 leading-9">

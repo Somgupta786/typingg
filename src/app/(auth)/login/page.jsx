@@ -10,19 +10,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import * as React from "react";
 import { theme } from "@/utils/themeCreate";
-import { useState, useMemo } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { authConfig } from "@/lib/auth";
-import { signOut } from "next-auth/react";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import axios from "@/app/api/axios";
+import toast from "react-hot-toast";
 
 const Page = () => {
-    // signOut()
-  const session = useSession(authConfig);
   const router = useRouter();
-//   console.log(session)
-
+  const [user, setUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [inputs, setInputs] = useState({
     email: "",
@@ -36,7 +32,7 @@ const Page = () => {
   };
 
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   const handleMouseDownPassword = (event) => {
@@ -62,47 +58,55 @@ const Page = () => {
     [showPassword]
   );
 
-//   if (session?.status == "authenticated") return router.push("/timeline");
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log("Login Failed:", error),
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const signInResponse = await signIn("credentials", {
-      email: inputs.email,
-      password: inputs.password,
-      redirect: false,
-    });
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user) {
+        try {
+          const response = await axios.post("api/v1/auth/exchange", {
+            access_token: user.access_token,
+          });
 
-    if (signInResponse && !signInResponse.error) {
-      //Redirect to homepage (/timeline)
-      console.log(signInResponse);
-    } else {
-      console.log("Error: ", signInResponse);
-      //   setError("Your Email or Password is wrong!");
-    }
-  };
-  const handleGoogleClick = () => {
-    signIn("google");
-  };
+          if (response.data.success) {
+            toast.success("Successfully Logged In");
+            router.push("/signup");
+          }
+        } catch (error) {
+          toast.error(error.response?.data?.message || "Login failed");
+          console.log(error);
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [user, router]);
+
   return (
     <ThemeProvider theme={theme}>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center gap-6 h-fit w-fit mb-20 md1:w-full"
-      >
+      <form className="flex flex-col items-center gap-6 h-fit w-fit mb-40 md1:w-full 1xl:w-[30%]  flex-shrink-[0.3]">
         <div className="flex flex-col gap-2 leading-9">
           <div className="self-center">
             <img src="/icon.svg" alt="icon" />
           </div>
-          <div className="self-center">Welcome back!</div>
-          <div className="text-[#B0B0B0] leading-5 text-[13px] text-center">
+          <div className="self-center text-[25px]">Welcome back!</div>
+          <div className="text-[#B0B0B0] leading-5 text-[15px] text-center">
             Don’t have an account yet?{" "}
-            <span onClick={()=>router.push("/signup")} className="text-Primary cursor-pointer underline">Sign up now</span>
+            <span
+              onClick={() => router.push("/signup")}
+              className="text-Primary cursor-pointer underline"
+            >
+              Sign up now
+            </span>
           </div>
         </div>
-        <div className="w-fit flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-8">
           <Box
             sx={{
-              "& > :not(style)": { width: "400px", display: "flex" },
+              "& > :not(style)": {  display: "flex" },
             }}
             noValidate
             autoComplete="off"
@@ -186,19 +190,22 @@ const Page = () => {
                 typography: {
                   sx: {
                     "& .MuiFormControlLabel-asterisk": {
-                      display: "none", // Hide the asterisk
+                      display: "none",
                     },
                   },
                 },
               }}
             />
-            <div className="text-Primary underline text-[13px] cursor-pointer " onClick={()=>router.push("/reset")}>
+            <div
+              className="text-Primary underline text-[13px] cursor-pointer"
+              onClick={() => router.push("/reset")}
+            >
               Forgot password?
             </div>
           </div>
         </div>
         <div
-          className={`px-6 py-3 bg-Primary font-bold text-[24px] text-black w-[100%] max-w-[400px] text-center rounded-lg ${
+          className={`px-6 py-3 bg-Primary font-bold text-[24px] text-black w-[100%] text-center rounded-lg ${
             isFormValid ? "brightness-100" : "brightness-50"
           }`}
         >
@@ -215,7 +222,7 @@ const Page = () => {
           <div>
             <img src="/face.svg" alt="Facebook" />
           </div>
-          <div className=" cursor-pointer" onClick={handleGoogleClick}>
+          <div className=" cursor-pointer" onClick={login}>
             <img src="/goo.svg" alt="Google" />
           </div>
           <div>

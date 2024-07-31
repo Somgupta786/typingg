@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import { NextAuthProvider } from "./providers";
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from "react-hot-toast";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,11 +20,11 @@ export default function RootLayout({ children }) {
       <body
         className={`w-screen min-h-screen relative overflow-x-hidden ${poppins.className}`}
       >
-        {" "}
-        <NextAuthProvider>
-        <Toaster position="top-center" />
+        <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
+          {" "}
+          <Toaster position="top-center" />
           {children}
-        </NextAuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
