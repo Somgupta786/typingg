@@ -15,6 +15,9 @@ import { useRouter } from "next/navigation";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "@/app/api/axios";
 import toast from "react-hot-toast";
+import { useLinkedIn } from "react-linkedin-login-oauth2";
+// You can still use default image provided by the package
+import linkedin from "react-linkedin-login-oauth2/assets/linkedin.png";
 
 const Page = () => {
   const router = useRouter();
@@ -85,6 +88,19 @@ const Page = () => {
     fetchProfile();
   }, [user, router]);
 
+  const { linkedInLogin } = useLinkedIn({
+    clientId: "866y2apj5u4rx5",
+    redirectUri: "http://localhost:3000/login",
+    onSuccess: (code) => {
+      // Change from `data.code` to `code`
+      console.log(code);
+    },
+    // Change from `onFailure` to `onError`
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   return (
     <ThemeProvider theme={theme}>
       <form className="flex flex-col items-center gap-6 h-fit w-fit mb-40 md1:w-full 1xl:w-[30%]  flex-shrink-[0.3]">
@@ -106,7 +122,7 @@ const Page = () => {
         <div className="w-full flex flex-col gap-8">
           <Box
             sx={{
-              "& > :not(style)": {  display: "flex" },
+              "& > :not(style)": { display: "flex" },
             }}
             noValidate
             autoComplete="off"
@@ -225,8 +241,12 @@ const Page = () => {
           <div className=" cursor-pointer" onClick={login}>
             <img src="/goo.svg" alt="Google" />
           </div>
-          <div>
-            <img src="/link.svg" alt="LinkedIn" />
+          <div className=" cursor-pointer" >
+            <img
+              src="/link.svg"
+              alt="Linked In"
+              onClick={linkedInLogin}
+            />
           </div>
         </div>
       </form>

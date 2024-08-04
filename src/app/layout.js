@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
       <body
         className={`w-screen min-h-screen relative overflow-x-hidden ${poppins.className}`}
       >
-        <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
+        <GoogleOAuthProvider clientId="286890073941-1pu4m1gvl3cle29jnpv6qvkf04mu97m7.apps.googleusercontent.com">
           {" "}
           <Toaster position="top-center" />
           {children}
