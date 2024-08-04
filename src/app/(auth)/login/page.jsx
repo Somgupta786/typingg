@@ -16,8 +16,7 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "@/app/api/axios";
 import toast from "react-hot-toast";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
-// You can still use default image provided by the package
-import linkedin from "react-linkedin-login-oauth2/assets/linkedin.png";
+
 
 const Page = () => {
   const router = useRouter();
