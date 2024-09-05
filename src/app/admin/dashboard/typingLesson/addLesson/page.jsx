@@ -18,14 +18,37 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
 
   const [details, setDetails] = useState({
+    tags : "",
     duration: "0min 0sec",
     comments: "closed",
     embedding: "disallowed",
     featured: "no",
     private: "no",
     publish: "new",
-    others: false,
+    others: "▼",
   });
+
+  const [inputValue, setInputValue] = useState("");
+  const [activeField, setActiveField] = useState("");
+
+  const handleFieldClick = (field) => {
+    setActiveField(field);
+    setInputValue(details[field]);
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputSubmit = () => {
+    if (activeField) {
+      setDetails((prevDetails) => ({
+        ...prevDetails,
+        [activeField]: inputValue,
+      }));
+      setActiveField(""); // Clear the active field after updating
+    }
+  };
 
   const handleTitleChange = (index, value) => {
     const newSections = [...sections];
@@ -58,6 +81,13 @@ const Page = () => {
     }
   };
 
+  const validateSections = () => {
+    // Check if all sections have title and description filled
+    return sections.every(
+      (section) => section.title.trim() !== "" && section.description.trim() !== ""
+    );
+  };
+
   const handleSubmit = async () => {
     const data = {
       title,
@@ -73,6 +103,12 @@ const Page = () => {
         difficulty: section.difficulty, // Include difficulty here
       })),
     };
+    if (!validateSections()) {
+        toast.error("Please fill in all section fields before submitting.");
+        return;
+      }
+  
+      setLoading(true);
 
     try {
       setLoading(true);
@@ -199,66 +235,40 @@ const Page = () => {
           </div>
 
           <div className="p-4 bg-white shadow-md rounded-md">
-            <h2 className="text-md font-semibold mb-2">Video Details</h2>
-            <hr className="border-b-2 border-gray-300 mb-4" />
-            <div className="flex flex-wrap gap-3 text-[0.85rem] mb-1">
-              <div className="flex">
-                <h3 className="font-medium">Tags</h3>
-              </div>
-              <div className="flex">
-                <h3 className="font-medium">Duration:</h3>
-                <div className=" bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem]">
-                  {details.duration}
-                </div>
-              </div>
-              <div className="flex ">
-                <span className="font-medium mr-1">Comments:</span>
-                <span className=" bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem]">
-                  {details.comments}
-                </span>
-              </div>
-              <div className="flex ">
-                <span className="font-medium mr-1">Embedding:</span>
-                <span className=" bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem]">
-                  {details.embedding}
-                </span>
-              </div>
-              <div className="flex ">
-                <span className="font-medium mr-1">Featured:</span>
-                <span className=" bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem]">
-                  {details.featured}
-                </span>
-              </div>
-              <div className="flex ">
-                <span className="font-medium mr-1">Private:</span>
-                <span className=" bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem]">
-                  {details.private}
-                </span>
-              </div>
-              <div className="flex ">
-                <span className="font-medium mr-1">Publish:</span>
-                <span className=" bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem]">
-                  {details.publish}
-                </span>
-              </div>
-              <div className="flex ">
-                <span className="font-medium mr-1">Others:</span>
-                <button className="bg-gray-200 p-1 h-[3vh] rounded-md text-gray-600">
-                  ▼
-                </button>
-              </div>
-            </div>
-
-            <hr className="border-b-2 border-gray-300 mb-4" />
-            <div>
-              <h3 className="font-medium mb-2">Video Tag</h3>
-              <input
-                type="text"
-                placeholder="Add video tag"
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
-            </div>
+      <h2 className="text-md font-semibold mb-2">Video Details</h2>
+      <hr className="border-b-2 border-gray-300 mb-4" />
+      <div className="flex flex-wrap gap-3 text-[0.8rem] mb-1">
+        {Object.entries(details).map(([key, value]) => (
+          <div className="flex" key={key}>
+            <span className="font-medium mr-1">{`${key.charAt(0).toUpperCase() + key.slice(1)}:`}</span>
+            <span
+              className={`bg-blue-100 px-[0.2rem] text-blue-500 h-[1.2rem] cursor-pointer ${
+                activeField === key ? 'bg-blue-200' : ''
+              }`}
+              onClick={() => handleFieldClick(key)}
+            >
+              {value.toString()}
+            </span>
           </div>
+        ))}
+       
+      </div>
+
+      <hr className="border-b-2 border-gray-300 mb-4" />
+      <div>
+        <h3 className="font-medium mb-2">
+          {activeField ? `Edit ${activeField.charAt(0).toUpperCase() + activeField.slice(1)}` : 'Add Video Detail'}
+        </h3>
+        <input
+          type="text"
+          placeholder={`Add ${activeField || 'detail'}`}
+          className="w-full p-2 border border-gray-300 rounded-md"
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputSubmit} // Update details on input blur
+        />
+      </div>
+    </div>
 
           <div className="p-4 bg-white shadow-md rounded-md">
             <h2 className="text-md font-semibold mb-2">Meta Details</h2>
@@ -379,7 +389,7 @@ const Page = () => {
               <p className=" ">
                 <FaCode />{" "}
               </p>{" "}
-              <p>Add embed code</p>
+              <p>Add section</p>
             </button>
           </div>
         </div>

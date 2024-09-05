@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { Toaster, toast } from "react-hot-toast";
+import imageCompression from 'browser-image-compression';
+import { useRef } from "react";
 import axios from "axios";
 const Page = () => {
+
   const [siteTitle, setSiteTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [logoImage, setLogoImage] = useState("");
@@ -19,6 +22,20 @@ const Page = () => {
   const [analyticsTrackingCode, setAnayliticsTrackingCode] = useState("");
   const [loading, setLoading] = useState(false);
 
+
+  const validateForm = () => {
+    return (
+      siteTitle.trim() !== "" &&
+      metaDescription.trim() !== "" &&
+      logoImage.trim() !== "" &&
+      defaultLanguage.trim() !== "" &&
+     
+      analyticsTrackingCode.trim() !== ""
+    );
+  };
+  
+  
+
   useEffect(() => {
     const textareas = document.querySelectorAll("textarea");
     textareas.forEach((textarea) => {
@@ -27,7 +44,45 @@ const Page = () => {
     });
   }, [siteTitle, metaDescription, htmlCode, maintainenceMessage]);
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+   
+    try {
+      // Compress the image
+      const options = {
+        maxSizeMB: 1, // Maximum size in MB
+        maxWidthOrHeight: 1024, // Maximum width or height
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setLogoImage(reader.result); // Set the data URL of the image
+        toast.success('Image uploaded successfully!');
+      };
+      reader.onerror = () => {
+        toast.error('Failed to upload image.');
+      };
+
+      reader.readAsDataURL(compressedFile); // Read the compressed file as a data URL
+    } catch (error) {
+      console.error('Error compressing image:', error);
+      toast.error('Failed to compress image.');
+    } 
+  };
+
+
   const handleSaveChanges = async () => {
+
+    if (!validateForm()) {
+      toast.error("Please fill in all required fields before submitting.");
+      return;
+    }
+
     const data = {
       siteTitle,
       metaDescription,
@@ -43,7 +98,7 @@ const Page = () => {
       analyticsTrackingCode,
     };
 
-    // console.log(data)
+   console.log(data)
     const token = localStorage.getItem("accessToken");
     //  console.log("Access Token:", token);
 
@@ -83,22 +138,23 @@ const Page = () => {
       <div className="flex justify-between bg-green-50 p-3 text-black border-y-[1px] border-gray-400">
         <div className="font-medium">Update Settings</div>
         <div
-          className="border-2 border-green-400 mr-11 text-green-400 px-1 w-[10rem] h-[2rem] flex justify-center items-center cursor-pointer"
-          onClick={handleSaveChanges}
-        >
-          {loading ? (
-            <div
-              className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.1em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-              role="status"
-            >
-              <span className="sr-only">Loading...</span>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <p>Save Changes</p>
-            </div>
-          )}
-        </div>
+  className="border-2 border-green-400 mr-11 text-green-400 px-1 w-[10rem] h-[2rem] flex justify-center items-center cursor-pointer"
+  onClick={handleSaveChanges}
+>
+  {loading ? (
+    <div
+      className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.1em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+      role="status"
+    >
+      <span className="sr-only">Loading...</span>
+    </div>
+  ) : (
+    <div className="flex items-center space-x-2">
+      <p>Save Changes</p>
+    </div>
+  )}
+</div>
+
       </div>
 
       {/* General Settings */}
@@ -126,8 +182,20 @@ const Page = () => {
       <div className="p-3 flex items-center border-y-[1px] border-gray-400">
         <div className="whitespace-nowrap">Logo Image</div>
         <div className="p-1 ml-[195px] rounded-sm bg-green-500 text-white flex items-center justify-between">
+        <label htmlFor="logoUpload" className="cursor-pointer flex items-center gap-2">
           <MdOutlineFileUpload className="text-black" /> Upload
-        </div>
+          <input
+            id="logoUpload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </label>
+      </div>
+
+ 
+
       </div>
 
       <div className="p-3 flex items-center border-t-[1px] border-gray-400">
@@ -158,7 +226,7 @@ const Page = () => {
 
       {/* Other Settings */}
       <div className="p-3 flex items-center border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Use SEO friendly URL</div>
+        <div className="whitespace-nowrap">Use SEO friendly URL's</div>
         <div className="flex gap-4 ml-[120px]">
           <label className="flex items-center gap-2">
             <input
@@ -219,7 +287,7 @@ const Page = () => {
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="maintainenceMode"
+              name="videoThumbnail"
               value="enabled"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
               checked={videoThumbnail}
@@ -230,7 +298,7 @@ const Page = () => {
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="maintainenceMode"
+              name="videoThumbnail"
               value="disabled"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
               checked={!videoThumbnail}

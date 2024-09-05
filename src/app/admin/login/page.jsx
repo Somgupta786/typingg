@@ -41,7 +41,7 @@ const SignIn = () => {
       try {
         setLoading(true); // Start loading spinner
         const requestBody = { email, password };
-        console.log("Request Body:", requestBody);
+        // console.log("Request Body:", requestBody);
 
         const response = await fetch(
           "https://typing.varankit.tech/api/v1/auth/admin/signIn",
@@ -83,10 +83,10 @@ const SignIn = () => {
       }}
     >
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="absolute top-[5vh] text-center text-3xl font-bold text-white">
+      <div className="absolute top-[5vh] text-white text-center text-3xl font-bold">
         TypingSpeedtest
       </div>
-      <div className="bg-white p-6 shadow-lg rounded-lg w-[30vw] max-h-[70vh] flex flex-col justify-center md:w-[95vw] md:h-auto">
+      <div className="bg-white p-6 shadow-lg rounded-lg w-[30vw]  max-h-[70vh] flex flex-col justify-center md:w-[95vw] md:h-auto">
         <h2 className="text-2xl font-semibold mb-6">Sign in to your account</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col">

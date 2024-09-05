@@ -16,10 +16,11 @@ export default function Layout({ children }) {
     router.push('/admin/dashboard/typingLesson/addLesson');
   };
 
+
   return (
     <div className="flex">
       {isSidebarOpen && (
-        <Sidebar className="h-[100vh] text-black">
+        <Sidebar className=" absolute min-h-[100vh] text-black">
           <div className="flex items-center justify-around p-4">
           <FaBars onClick={toggleSidebar} className="cursor-pointer" />
             <h1 className="text-lg font-bold">TypingWebsite</h1>
@@ -27,11 +28,11 @@ export default function Layout({ children }) {
           </div>
           <Menu className="h-[]">
             <SubMenu label="Settings">
-              <MenuItem>General Setting </MenuItem>
+              <MenuItem onClick={()=>router.push('/admin/dashboard/settings')}>General Setting </MenuItem>
               <MenuItem>Email</MenuItem>
             </SubMenu>
             <SubMenu label="Typing Lessons">
-            <MenuItem onClick={handleAddLessonClick}>
+             <MenuItem onClick={handleAddLessonClick}>
       Add Lessons
     </MenuItem>
               <MenuItem>Manage Lessons</MenuItem>
@@ -41,11 +42,11 @@ export default function Layout({ children }) {
         </Sidebar>
       )}
       {!isSidebarOpen && (
-        <div className="p-4">
+        <div className="p-4 bg-[#F9F9F9B3]">
           <FaBars onClick={toggleSidebar} className="cursor-pointer" />
         </div>
       )}
-      <div className=" w-full" >
+      <div className=" w-full " >
         {children}
       </div>
     </div>
