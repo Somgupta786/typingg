@@ -20,7 +20,7 @@ export default function Layout({ children }) {
   return (
     <div className="flex">
       {isSidebarOpen && (
-        <Sidebar className=" absolute min-h-[100vh] text-black">
+        <Sidebar className=" min-h-[100vh] text-black">
           <div className="flex items-center justify-around p-4">
           <FaBars onClick={toggleSidebar} className="cursor-pointer" />
             <h1 className="text-lg font-bold">TypingWebsite</h1>

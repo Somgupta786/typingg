@@ -226,7 +226,7 @@ const Page = () => {
 
       {/* Other Settings */}
       <div className="p-3 flex items-center border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Use SEO friendly URL's</div>
+        <div className="whitespace-nowrap">Use SEO friendly URL</div>
         <div className="flex gap-4 ml-[120px]">
           <label className="flex items-center gap-2">
             <input
