@@ -5,7 +5,7 @@ import { useState } from "react";
 import { MdDeleteForever } from "react-icons/md";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
-const page = () => {
+const Page = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [titleAndDescription, setTitleAndDescription] = useState("");
@@ -403,4 +403,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
