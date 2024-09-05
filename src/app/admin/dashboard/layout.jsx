@@ -11,9 +11,9 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-full min-h-[100vh]">
       {isSidebarOpen && (
-        <Sidebar className="h-[100vh] text-black">
+        <Sidebar className="  text-black">
           <div className="flex items-center justify-around p-4">
           <FaBars onClick={toggleSidebar} className="cursor-pointer" />
             <h1 className="text-lg font-bold">TypingWebsite</h1>
@@ -25,7 +25,7 @@ export default function Layout({ children }) {
               <MenuItem>Email</MenuItem>
             </SubMenu>
             <SubMenu label="Typing Lessons">
-              <MenuItem>Add Lessons </MenuItem>
+              <MenuItem >Add Lessons </MenuItem>
               <MenuItem>Manage Lessons</MenuItem>
               <MenuItem>Edit Lessons</MenuItem>
             </SubMenu>
@@ -33,7 +33,7 @@ export default function Layout({ children }) {
         </Sidebar>
       )}
       {!isSidebarOpen && (
-        <div className="p-4">
+        <div className="p-4 bg-[#F9F9F9B3] ">
           <FaBars onClick={toggleSidebar} className="cursor-pointer" />
         </div>
       )}

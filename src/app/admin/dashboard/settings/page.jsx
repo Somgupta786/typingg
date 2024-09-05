@@ -5,25 +5,77 @@ import { MdOutlineFileUpload } from "react-icons/md";
 const Page = () => {
   const [siteTitle, setSiteTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [logoImage, setLogoImage] = useState(""); 
+  const [defaultLanguage, setDefaultLanguage] = useState("English");
+  const [defaultTimeZone, setDefaultTimeZone] = useState("UTC");
+  const [useSeoFriendlyUrls, setUseSeoFriendlyUrls] = useState(true);
+  const [discourageSearchEngines, setDiscourageSearchEngines] = useState(false);
+  const [videoThumbnail, setvideoThumbnail] = useState(false);
+  const [maintainenceMode, setMaintainenceMode] = useState(false);
+  const [maintainenceMessage, setMaintainenceMessage] = useState("");
+  const [euCookieNotification, setEuCookieNotification] = useState(false);
   const [htmlCode, setHtmlcode] = useState("");
-  const [useSeoFriendlyUrls, setUseSeoFriendlyUrls] = useState("yes");
 
   useEffect(() => {
     const textareas = document.querySelectorAll("textarea");
     textareas.forEach((textarea) => {
-      textarea.style.height = "auto"; // Reset height
-      textarea.style.height = textarea.scrollHeight + "px"; // Set height based on scrollHeight
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
     });
-  }, [siteTitle, metaDescription, htmlCode]);
+  }, [siteTitle, metaDescription, htmlCode, maintainenceMessage]);
+
+  const handleSaveChanges = () => {
+    const data = {
+      siteTitle,
+      metaDescription,
+      logoImage,
+      defaultLanguage,
+      defaultTimeZone,
+      useSEOFriendlyUrls: useSeoFriendlyUrls,
+      discourageSearchEngines,
+    
+      maintainenceMode,
+      maintainenceMessage,
+      euCookieNotification,
+      analyticsTrackingCode: htmlCode,
+    };
+
+
+    fetch("https://typing.varankit.tech/api/v1/admin/settings", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Settings saved successfully!");
+        } else {
+          alert("Failed to save settings.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while saving settings.");
+      });
+  };
+
 
   return (
     <div className="flex flex-col text-gray-500 w-full h-full bg-white font-normal">
+      {/* Header */}
       <div className="flex justify-between bg-green-50 p-3 text-black border-y-[1px] border-gray-400">
         <div className="font-medium">Update Settings</div>
-        <div className="border-2 border-green-400 text-green-400 px-1 cursor-pointer">
+        <div
+          className="border-2 border-green-400 text-green-400 px-1 cursor-pointer"
+          onClick={handleSaveChanges}
+        >
           Save Changes
         </div>
       </div>
+
+      {/* General Settings */}
       <div className="text-black p-3 font-medium">General Settings</div>
       <div className="p-3 flex items-center border-t-[1px] border-gray-400">
         <div className="whitespace-nowrap">Site title</div>
@@ -34,7 +86,8 @@ const Page = () => {
           rows={1}
         ></textarea>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
         <div className="whitespace-nowrap">Meta Description</div>
         <textarea
           className="rounded-sm border-gray-400 w-full border-[1px] ml-[150px] text-[14px] p-1 text-black overflow-hidden resize-none"
@@ -43,172 +96,194 @@ const Page = () => {
           rows={1}
         ></textarea>
       </div>
-      <div className="p-3 flex items-center  border-y-[1px] border-gray-400">
+
+      <div className="p-3 flex items-center border-y-[1px] border-gray-400">
         <div className="whitespace-nowrap">Logo Image</div>
         <div className="p-1 ml-[195px] rounded-sm bg-green-500 text-white flex items-center justify-between">
           <MdOutlineFileUpload className="text-black" /> Upload
         </div>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
         <div className="whitespace-nowrap">Default language</div>
-        <select className="bg-white ml-[150px] text-black border-[1px] border-gray-300">
-          <option>English</option>
-          <option>Hindi</option>
+        <select
+          className="bg-white ml-[150px] text-black border-[1px] border-gray-300"
+          value={defaultLanguage}
+          onChange={(e) => setDefaultLanguage(e.target.value)}
+        >
+          <option value="English">English</option>
+          <option value="Hindi">Hindi</option>
+          {/* Add other languages here */}
         </select>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
         <div className="whitespace-nowrap">Default time zone</div>
-        <select className="bg-white ml-[150px] text-black border-[1px] border-gray-300">
-          <option>UTC</option>
-          <option>IST</option>
+        <select
+          className="bg-white ml-[150px] text-black border-[1px] border-gray-300"
+          value={defaultTimeZone}
+          onChange={(e) => setDefaultTimeZone(e.target.value)}
+        >
+          <option value="UTC">UTC</option>
+          <option value="IST">IST</option>
+          {/* Add other time zones here */}
         </select>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Use SEO friendly URL's</div>
+
+      {/* Other Settings */}
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
+        <div className="whitespace-nowrap">Use SEO friendly URL</div>
         <div className="flex gap-4 ml-[120px]">
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
+              name="useSeoFriendlyUrls"
               value="yes"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "yes"}
-              onChange={() => setUseSeoFriendlyUrls("yes")}
+              checked={useSeoFriendlyUrls}
+              onChange={() => setUseSeoFriendlyUrls(true)}
             />
             Yes
           </label>
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
+              name="useSeoFriendlyUrls"
               value="no"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "no"}
-              onChange={() => setUseSeoFriendlyUrls("no")}
+              checked={!useSeoFriendlyUrls}
+              onChange={() => setUseSeoFriendlyUrls(false)}
             />
             No
           </label>
         </div>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Discourage search Engine</div>
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
+        <div className="whitespace-nowrap">Discourage search engines</div>
         <div className="flex gap-4 ml-[81px]">
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
+              name="discourageSearchEngines"
               value="yes"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "yes"}
-              onChange={() => setUseSeoFriendlyUrls("yes")}
+              checked={discourageSearchEngines}
+              onChange={() => setDiscourageSearchEngines(true)}
             />
             Yes
           </label>
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
+              name="discourageSearchEngines"
               value="no"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "no"}
-              onChange={() => setUseSeoFriendlyUrls("no")}
+              checked={!discourageSearchEngines}
+              onChange={() => setDiscourageSearchEngines(false)}
             />
             No
           </label>
         </div>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Show video thumbnail from</div>
-        <div className="flex gap-4 ml-[70px]">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="seoFriendly"
-              value="yes"
-              className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "yes"}
-              onChange={() => setUseSeoFriendlyUrls("yes")}
-            />
-            Yes
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="seoFriendly"
-              value="no"
-              className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "no"}
-              onChange={() => setUseSeoFriendlyUrls("no")}
-            />
-            No
-          </label>
-        </div>
-      </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Use Maintanence mode</div>
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
+        <div className="whitespace-nowrap">show video thumbnail from</div>
         <div className="flex gap-4 ml-[100px]">
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
-              value="yes"
+              name="maintainenceMode"
+              value="enabled"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "yes"}
-              onChange={() => setUseSeoFriendlyUrls("yes")}
+              checked={videoThumbnail}
+              onChange={() =>setvideoThumbnail(true)}
             />
             Enabled
           </label>
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
-              value="no"
+              name="maintainenceMode"
+              value="disabled"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "no"}
-              onChange={() => setUseSeoFriendlyUrls("no")}
+              checked={!videoThumbnail}
+              onChange={() => setvideoThumbnail(false)}
             />
             Disabled
           </label>
         </div>
       </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">Maintenance mode message</div>
-        <select className="bg-white p-1 text-black border-[1px] border-gray-300 w-full ml-[55px]">
-          <option>Medium (320*180 pixel)</option>
-          <option>Large (320*180 pixel)</option>
-        </select>
-      </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
-        <div className="whitespace-nowrap">EU cookie notification</div>
-        <div className="flex gap-4 ml-[125px]">
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
+        <div className="whitespace-nowrap">Use Maintenance mode</div>
+        <div className="flex gap-4 ml-[100px]">
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
-              value="yes"
+              name="maintainenceMode"
+              value="enabled"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "yes"}
-              onChange={() => setUseSeoFriendlyUrls("yes")}
+              checked={maintainenceMode}
+              onChange={() => setMaintainenceMode(true)}
             />
             Enabled
           </label>
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              name="seoFriendly"
-              value="no"
+              name="maintainenceMode"
+              value="disabled"
               className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
-              checked={useSeoFriendlyUrls === "no"}
-              onChange={() => setUseSeoFriendlyUrls("no")}
+              checked={!maintainenceMode}
+              onChange={() => setMaintainenceMode(false)}
             />
             Disabled
           </label>
         </div>
       </div>
-      <div className="text-black p-3 font-medium border-t-[1px] border-gray-400">
-        Analytics/Tracking Code
-      </div>
-      <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
+
+      <div className="p-3 flex items-center border-t-[1px] border-gray-400">
+    <div className="whitespace-nowrap">EU Cookie notification</div>
+    <div className="flex gap-4 ml-[55px]">
+      <label className="flex items-center gap-2">
+        <input
+          type="radio"
+          name="euCookieNotification"
+          value="yes"
+          className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
+          checked={euCookieNotification}
+          onChange={() => setEuCookieNotification(true)}
+        />
+        Yes
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="radio"
+          name="euCookieNotification"
+          value="no"
+          className="appearance-none w-5 h-5 border border-gray-400 rounded-full checked:bg-black checked:border-transparent cursor-pointer"
+          checked={!euCookieNotification}
+          onChange={() => setEuCookieNotification(false)}
+        />
+        No
+      </label>
+    </div>
+  </div>
+
+  {/* Analytics Tracking */}
+  <div className="p-3 flex items-center border-t-[1px] border-gray-400">
+    <div className="whitespace-nowrap text-black">Analytics tracking code</div>
+    {/* <textarea
+      className="rounded-sm border-gray-400 w-full ml-[65px] border-[1px] text-[14px] p-1 text-black overflow-hidden resize-none"
+      value={htmlCode}
+      onChange={(e) => setHtmlcode(e.target.value)}
+      rows={1}
+    ></textarea> */}
+  </div>
+
+
+  <div className="p-3 flex items-center  border-t-[1px] border-gray-400">
         <div className="whitespace-nowrap">HTML Code</div>
         <div className=" flex flex-col w-full ml-[215px]">
           <textarea
@@ -227,7 +302,8 @@ const Page = () => {
           Save Changes
         </div>
       </div>
-    </div>
+</div>
+
   );
 };
 
