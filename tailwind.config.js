@@ -14,6 +14,9 @@ module.exports = {
         Primary: "#D5E94E",
         Secondary: "#EA4F26",
         Surface: "#0A0A0A",
+        lightGrey: "#D1D1D1",
+        Grey: "#B0B0B0",
+        darkGrey: "#3D3D3D"
       },
       screens: {
         "2xl": { max: "1535px" },

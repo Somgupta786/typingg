@@ -36,7 +36,7 @@ export default function Layout({ children }) {
       Add Lessons
     </MenuItem>
               <MenuItem>Manage Lessons</MenuItem>
-              <MenuItem>Edit Lessons</MenuItem>
+              <MenuItem onClick={()=>router.push('/admin/dashboard/typingLesson/addCategories')}>Lesson Categories</MenuItem>
             </SubMenu>
           </Menu>
         </Sidebar>
