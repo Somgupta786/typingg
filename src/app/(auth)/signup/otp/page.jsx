@@ -9,8 +9,10 @@ import OtpInput from "react-otp-input";
 import axios from "@/app/api/axios";
 import cookie from "js-cookie";
 import toast from 'react-hot-toast';
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   const email = cookie.get("email");
   const password = cookie.get("password");
   const username = cookie.get("username");
@@ -39,6 +41,7 @@ const Page = () => {
 
       if (response.data.success) {
         toast.success("Successfully registered");
+        router.push("/login")
       } else {
         toast.error("OTP verification failed");
       }

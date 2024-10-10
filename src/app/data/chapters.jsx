@@ -4,41 +4,41 @@ export const chaptersData = [
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
   {
     title: "Words",
     description: "Let's Begin Your Journey",
-    percent: "0%",
+    progress: "20",
   },
 ];

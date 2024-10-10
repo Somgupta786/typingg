@@ -3,9 +3,10 @@ import * as React from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { FaBars } from 'react-icons/fa'; // Example using react-icons
 import { useRouter } from 'next/navigation';
-
+import { useEffect , useState } from "react";
 export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -16,11 +17,26 @@ export default function Layout({ children }) {
     router.push('/admin/dashboard/typingLesson/addLesson');
   };
 
+ 
+ if (typeof window !== 'undefined') {
+ // Fetch the theme from local storage or default to light
+ const [theme, setTheme] = useState(window.localStorage.getItem("theme") || "light");
+}
+ console.log(theme)
 
+ useEffect(() => {
+   // Apply the theme class to the body
+   document.body.className = theme;
+   // Save the theme in localStorage
+   if (typeof window !== 'undefined') {
+    window.localStorage.setItem("theme", theme);
+  }
+  
+ }, [theme]);
   return (
-    <div className="flex">
+    <div className="flex bg-black">
       {isSidebarOpen && (
-        <Sidebar className=" min-h-[100vh] text-black">
+        <Sidebar backgroundColor={theme === "dark"?"rgb(31, 41, 55)":"rgb(229, 231, 235)"} className={`min-h-[100vh] ${theme === "dark" ? " text-gray-100" : "  text-black"}`}>
           <div className="flex items-center justify-around p-4">
           <FaBars onClick={toggleSidebar} className="cursor-pointer" />
             <h1 className="text-lg font-bold">TypingWebsite</h1>
@@ -42,8 +58,8 @@ export default function Layout({ children }) {
         </Sidebar>
       )}
       {!isSidebarOpen && (
-        <div className="p-4 bg-[#F9F9F9B3]">
-          <FaBars onClick={toggleSidebar} className="cursor-pointer" />
+        <div className=" min-h-[100vh] dark:bg-gray-800 bg-gray-100 p-4 bg-">
+          <FaBars onClick={toggleSidebar} className="cursor-pointer text-black" />
         </div>
       )}
       <div className=" w-full " >

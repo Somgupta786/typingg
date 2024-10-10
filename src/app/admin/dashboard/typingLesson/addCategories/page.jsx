@@ -1,88 +1,149 @@
 "use client";
-import { useState } from "react";
-import { FaCheck, FaCross, FaHome, FaCode } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaCheck, FaHome, FaMoon, FaSun } from "react-icons/fa";
 import { RiImageEditFill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
-const Page = () => {
-    const router = useRouter();
 
+const Page = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState("light");
+
   const courses = [
     { name: "Typing Basic", slug: "typing-basic", lessons: 15 },
-    { name: "Typing Beginner", slug: "typing-begineer", lessons: 8 },
+    { name: "Typing Beginner", slug: "typing-beginner", lessons: 8 },
     { name: "Typing Intermediate", slug: "typing-intermediate", lessons: 10 },
     { name: "Typing Advanced", slug: "typing-advanced", lessons: 9 },
   ];
-  return (
-    <div className=" h-full w-full bg-white">
-      <div className="flex justify-between  bg-green-50 p-3 text-black border-y-[1px] border-gray-400">
-        <div className="font-medium flex items-center gap-4">
-          <div>Lesson Categories</div>
 
-          <div onClick={()=>router.push('/admin/dashboard/typingLesson/addCategories/new')} className="space-x-2 border-2 flex items-center justify-center w-[5rem] h-[2rem] flex-nowrap gap-1 border-green-400 text-green-400 px-1 cursor-pointer whitespace-nowrap">
-            Add new
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("theme");
+    }
+
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else {
+      setTheme("light");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.body.classList.add("dark");
+      if (typeof window !== "undefined") {
+        localStorage.setItem("theme", "dark");
+      }
+    } else {
+      document.body.classList.remove("dark");
+      if (typeof window !== "undefined") {
+        localStorage.setItem("theme", "light");
+      }
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 transition-colors duration-300">
+      {/* Header */}
+      <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-900 p-6 border-b-2 border-gray-300 dark:border-gray-600">
+        <div className="text-2xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-6">
+          <span className="text-green-600 dark:text-green-400">
+            Lesson Categories
+          </span>
+          <div
+            onClick={() =>
+              router.push("/admin/dashboard/typingLesson/addCategories/new")
+            }
+            className="transition-all duration-300 bg-green-500 text-white py-2 px-6 rounded-lg cursor-pointer hover:bg-green-600 flex items-center gap-2 text-lg font-medium"
+          >
+            <FaCheck /> Add New
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between p-3 text-black border-y-[1px] border-gray-400 text-sm bg-white">
-        <div className="font-medium flex flex-nowrap items-center justify-center gap-2">
-          <FaHome /> <p className=" font-bold">Home</p> <span>/</span>{" "}
-          <p className="font-bold">Lessons</p> <span>/</span>{" "}
-          <p className=" flex flex-nowrap">Lesson Categories</p>
-        </div>
+      {/* Breadcrumbs */}
+      <div className="flex justify-start items-center bg-white dark:bg-gray-800 p-6 text-sm border-b-2 border-gray-300 dark:border-gray-600">
+        <FaHome className="text-gray-600 dark:text-gray-300 text-lg" />
+        <span className="ml-2 font-bold text-gray-800 dark:text-gray-200 text-xl">
+          Home
+        </span>
+        <span className="mx-1 text-gray-600 dark:text-gray-400 text-lg">/</span>
+        <span className="font-bold text-gray-800 dark:text-gray-200 text-xl">
+          Lessons
+        </span>
+        <span className="mx-1 text-gray-600 dark:text-gray-400 text-lg">/</span>
+        <span className="text-gray-600 dark:text-gray-400 text-lg">
+          Lesson Categories
+        </span>
       </div>
-      <div>
-        <table className="min-w-full table-auto">
-          <thead className="bg-gray-100">
+
+      {/* Table */}
+      <div className="p-6">
+        <table className="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600">
+          <thead className="bg-gray-200 dark:bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Genre Name
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                URL Slug
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Total Lessons
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Position
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Action
-              </th>
+              {[
+                "Genre Name",
+                "URL Slug",
+                "Total Lessons",
+                "Position",
+                "Action",
+              ].map((header, index) => (
+                <th
+                  key={index}
+                  className="px-8 py-4 text-left text-lg font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-300 dark:border-gray-600 dark:text-gray-300"
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
             {courses.map((course, index) => (
               <tr key={index}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {/* Genre Name */}
+                <td className="px-8 py-4 text-lg font-medium text-gray-900 border-b border-gray-300 dark:border-gray-600 dark:text-gray-200">
                   {course.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                {/* URL Slug */}
+                <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
                   {course.slug}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                {/* Total Lessons */}
+                <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
                   {course.lessons}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <button className="px-2 text-gray-500 hover:text-gray-900">
+
+                {/* Position */}
+                <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-4">
+                    <button className="px-3 text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300">
                       ▲
                     </button>
-                    <button className="px-2 text-gray-500 hover:text-gray-900">
+                    <button className="px-3 text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300">
                       ▼
                     </button>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      <RiImageEditFill />
+
+                {/* Actions */}
+                <td className="px-8 py-4 text-lg font-medium border-b border-gray-300 dark:border-gray-600">
+                  <div className="flex space-x-6">
+                    {/* Edit Button */}
+                    <button className="transition-all duration-300 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none text-xl">
+                      <RiImageEditFill className="w-6 h-6" />
                     </button>
-                    <button className="text-red-600 hover:text-red-900">
+
+                    {/* Delete Button */}
+                    <button className="transition-all duration-300 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 focus:outline-none text-xl">
                       <svg
-                        className="w-5 h-5"
+                        className="w-6 h-6"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -106,4 +167,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;

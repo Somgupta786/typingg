@@ -1,18 +1,18 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState } from "react";
 import axios from "@/app/api/axios";
 
 const LessonForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    metaTitle: '',
-    metaKeywords: '',
-    metaDescription: '',
+    name: "",
+    description: "",
+    metaTitle: "",
+    metaKeywords: "",
+    metaDescription: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   // Handle form data changes
@@ -35,28 +35,42 @@ const LessonForm = () => {
 
     // Check if form is valid
     if (!isFormValid()) {
-      setError('Please fill in all required fields.');
+      setError("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
     setSuccess(false);
-    const token = localStorage.getItem("accessToken");
+
+    let token;
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("accessToken");
+    }
+
+    if (!token) {
+      setError("Authorization token is missing.");
+      setLoading(false);
+      return;
+    }
 
     try {
       // Sending POST request to API
-      const response = await axios.post('api/v1/admin/createCategory', formData,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
+      const response = await axios.post(
+        "api/v1/admin/createCategory",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       if (response.status === 200) {
         setSuccess(true);
       }
     } catch (err) {
-      setError('Failed to create category. Please try again.');
+      setError("Failed to create category. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -68,16 +82,20 @@ const LessonForm = () => {
         <h1 className="text-2xl font-bold">Add New Lesson Category</h1>
         <button
           type="button"
-          className={`bg-green-500 text-white px-4 py-2 rounded ${!isFormValid() && 'opacity-50 cursor-not-allowed'}`}
+          className={`bg-green-500 text-white px-4 py-2 rounded ${
+            !isFormValid() && "opacity-50 cursor-not-allowed"
+          }`}
           onClick={handleSubmit}
           disabled={!isFormValid()}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
 
       {error && <div className="text-red-500 mt-4">{error}</div>}
-      {success && <div className="text-green-500 mt-4">Category created successfully!</div>}
+      {success && (
+        <div className="text-green-500 mt-4">Category created successfully!</div>
+      )}
 
       <form className="mt-6">
         <div className="bg-white p-6 rounded shadow-lg mb-6">
@@ -147,19 +165,18 @@ const LessonForm = () => {
 
         {/* Cancel and Submit Buttons */}
         <div className="flex justify-between mt-6">
-          <button
-            type="button"
-            className="bg-gray-500 text-white px-4 py-2 rounded"
-          >
+          <button type="button" className="bg-gray-500 text-white px-4 py-2 rounded">
             Cancel
           </button>
           <button
             type="submit"
-            className={`bg-green-500 text-white px-4 py-2 rounded ${!isFormValid() && 'opacity-50 cursor-not-allowed'}`}
+            className={`bg-green-500 text-white px-4 py-2 rounded ${
+              !isFormValid() && "opacity-50 cursor-not-allowed"
+            }`}
             onClick={handleSubmit}
             disabled={!isFormValid()}
           >
-            {loading ? 'Submitting...' : 'Submit'}
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>

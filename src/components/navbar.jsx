@@ -1,3 +1,4 @@
+
 const Navbar = () =>{
 return(
     <div className=" flex  py-6 justify-between  items-center text-[#888888] font-normal text-[16px]">

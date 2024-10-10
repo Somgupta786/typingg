@@ -14,8 +14,7 @@ export default function Layout({ children }) {
         <div className=" mr-5 1xl:w-[42%] h-fullnp md1:hidden">
           <img className="h-[100%] w-[100%]" src="/Grids.svg" />
         </div>
-        {children}
-
+        {children} 
         <div></div>
       </div>
     </div>

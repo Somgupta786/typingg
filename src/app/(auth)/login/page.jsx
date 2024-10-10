@@ -12,21 +12,43 @@ import * as React from "react";
 import { theme } from "@/utils/themeCreate";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { googleLogout, useGoogleLogin } from "@react-oauth/google";
-import axios from "@/app/api/axios";
-import toast from "react-hot-toast";
-import { useLinkedIn } from "react-linkedin-login-oauth2";
-
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/features/auth/authSlice";
 
 const Page = () => {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+  
+  // localStorage.removeItem("token");
+
   const [showPassword, setShowPassword] = useState(false);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false); // Track API call status
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (auth.token) {
+      router.push("/practise-site");
+    }
+  }, [auth.token, router]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true); // Set loading to true when form is submitted
+    const action = await dispatch(
+      login({ email: inputs.email, password: inputs.password })
+    );
+    setLoading(false); // Reset loading after API call finishes
+
+    if (login.fulfilled.match(action)) {
+      router.push("/practise-site"); // Redirect to the desired route
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,49 +82,12 @@ const Page = () => {
     [showPassword]
   );
 
-  const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
-    onError: (error) => console.log("Login Failed:", error),
-  });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (user) {
-        try {
-          const response = await axios.post("api/v1/auth/exchange", {
-            access_token: user.access_token,
-          });
-
-          if (response.data.success) {
-            toast.success("Successfully Logged In");
-            router.push("/signup");
-          }
-        } catch (error) {
-          toast.error(error.response?.data?.message || "Login failed");
-          console.log(error);
-        }
-      }
-    };
-
-    fetchProfile();
-  }, [user, router]);
-
-  const { linkedInLogin } = useLinkedIn({
-    clientId: "866y2apj5u4rx5",
-    redirectUri: "http://localhost:3000/login",
-    onSuccess: (code) => {
-      // Change from `data.code` to `code`
-      console.log(code);
-    },
-    // Change from `onFailure` to `onError`
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-
   return (
     <ThemeProvider theme={theme}>
-      <form className="flex flex-col items-center gap-6 h-fit w-fit mb-40 md1:w-full 1xl:w-[30%]  flex-shrink-[0.3]">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center gap-6 h-fit w-fit mb-40 md1:w-full 1xl:w-[30%]  flex-shrink-[0.3]"
+      >
         <div className="flex flex-col gap-2 leading-9">
           <div className="self-center">
             <img src="/icon.svg" alt="icon" />
@@ -201,15 +186,6 @@ const Page = () => {
                 />
               }
               label="Remember me?"
-              componentsProps={{
-                typography: {
-                  sx: {
-                    "& .MuiFormControlLabel-asterisk": {
-                      display: "none",
-                    },
-                  },
-                },
-              }}
             />
             <div
               className="text-Primary underline text-[13px] cursor-pointer"
@@ -221,32 +197,16 @@ const Page = () => {
         </div>
         <div
           className={`px-6 py-3 bg-Primary font-bold text-[24px] text-black w-[100%] text-center rounded-lg ${
-            isFormValid ? "brightness-100" : "brightness-50"
+            isFormValid && !loading ? "brightness-100" : "brightness-50"
           }`}
         >
-          <button type="submit" className="border-none bg-transparent">
-            Log in
+          <button
+            type="submit"
+            className="border-none bg-transparent"
+            disabled={!isFormValid || loading} // Disable button during loading or if form is invalid
+          >
+            {loading ? "Loading..." : "Log in"}
           </button>
-        </div>
-        <div className="flex items-center gap-4">
-          <hr className="w-[64px] border border-[#4F4F4F]" />
-          <div>or</div>
-          <hr className="w-[64px] border border-[#4F4F4F]" />
-        </div>
-        <div className="w-[100%] flex justify-evenly">
-          <div>
-            <img src="/face.svg" alt="Facebook" />
-          </div>
-          <div className=" cursor-pointer" onClick={login}>
-            <img src="/goo.svg" alt="Google" />
-          </div>
-          <div className=" cursor-pointer" >
-            <img
-              src="/link.svg"
-              alt="Linked In"
-              onClick={linkedInLogin}
-            />
-          </div>
         </div>
       </form>
     </ThemeProvider>

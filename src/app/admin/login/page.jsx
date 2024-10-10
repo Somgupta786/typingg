@@ -58,8 +58,11 @@ const SignIn = () => {
           throw new Error(result.message || "Something went wrong");
         }
         //  console.log(result);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem("accessToken", result.data.accessToken);
+        }
 
-        localStorage.setItem("accessToken", result.data.accessToken);
+        
 
         toast.success("Sign-in successful!");
         setTimeout(() => {
