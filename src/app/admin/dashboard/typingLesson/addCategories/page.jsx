@@ -19,13 +19,14 @@ const Page = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTheme = localStorage.getItem("theme");
-    }
+    
 
     if (storedTheme) {
       setTheme(storedTheme);
     } else {
       setTheme("light");
     }
+  }
   }, []);
 
   useEffect(() => {

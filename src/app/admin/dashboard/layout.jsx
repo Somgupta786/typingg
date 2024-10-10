@@ -21,7 +21,7 @@ export default function Layout({ children }) {
   useEffect(() => {
     // Check if window is defined (only runs in the browser)
     if (typeof window !== 'undefined') {
-      // Fetch the theme from local storage or default to light
+      // Fetch the theme from local storage or default to light correction 
       const storedTheme = window.localStorage.getItem("theme") || "light";
       setTheme(storedTheme);
 
