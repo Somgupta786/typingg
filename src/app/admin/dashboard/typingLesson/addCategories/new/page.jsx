@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "@/app/api/axios";
+import {useRouter} from "next/navigation";
 
 const LessonForm = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ const LessonForm = () => {
     metaKeywords: "",
     metaDescription: "",
   });
-
+const router = useRouter()
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -57,7 +58,7 @@ const LessonForm = () => {
     try {
       // Sending POST request to API
       const response = await axios.post(
-        "api/v1/admin/createCategory",
+        "api/v1/admin/Category",
         formData,
         {
           headers: {
@@ -66,8 +67,10 @@ const LessonForm = () => {
         }
       );
 
-      if (response.status === 200) {
+      if (response.data.success) {
         setSuccess(true);
+        router.push("/admin/dashboard/typingLesson/addCategories")
+
       }
     } catch (err) {
       setError("Failed to create category. Please try again.");

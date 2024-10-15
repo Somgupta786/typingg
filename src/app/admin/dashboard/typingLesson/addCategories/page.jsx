@@ -1,32 +1,48 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaCheck, FaHome, FaMoon, FaSun } from "react-icons/fa";
+import { FaCheck, FaHome } from "react-icons/fa";
 import { RiImageEditFill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
+
+// CSS for Loader (Add this style globally or in your component)
+const loaderStyles = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #4CAF50;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+`;
 
 const Page = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [theme, setTheme] = useState("light");
-
-  const courses = [
-    { name: "Typing Basic", slug: "typing-basic", lessons: 15 },
-    { name: "Typing Beginner", slug: "typing-beginner", lessons: 8 },
-    { name: "Typing Intermediate", slug: "typing-intermediate", lessons: 10 },
-    { name: "Typing Advanced", slug: "typing-advanced", lessons: 9 },
-  ];
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTheme = localStorage.getItem("theme");
-    
-
-    if (storedTheme) {
-      setTheme(storedTheme);
-    } else {
-      setTheme("light");
+      if (storedTheme) {
+        setTheme(storedTheme);
+      } else {
+        setTheme("light");
+      }
     }
-  }
   }, []);
 
   useEffect(() => {
@@ -47,8 +63,30 @@ const Page = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
+  // Fetch categories from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("https://typing.varankit.tech/api/v1/categories");
+        const data = await response.json();
+        if (data.success) {
+          setCategories(data.data.categories);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 transition-colors duration-300">
+      <style>{loaderStyles}</style> {/* Inline CSS for loader */}
+
       {/* Header */}
       <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-900 p-6 border-b-2 border-gray-300 dark:border-gray-600">
         <div className="text-2xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-6">
@@ -82,88 +120,81 @@ const Page = () => {
         </span>
       </div>
 
-      {/* Table */}
+      {/* Table or Loader */}
       <div className="p-6">
-        <table className="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              {[
-                "Genre Name",
-                "URL Slug",
-                "Total Lessons",
-                "Position",
-                "Action",
-              ].map((header, index) => (
-                <th
-                  key={index}
-                  className="px-8 py-4 text-left text-lg font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-300 dark:border-gray-600 dark:text-gray-300"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
-            {courses.map((course, index) => (
-              <tr key={index}>
-                {/* Genre Name */}
-                <td className="px-8 py-4 text-lg font-medium text-gray-900 border-b border-gray-300 dark:border-gray-600 dark:text-gray-200">
-                  {course.name}
-                </td>
-
-                {/* URL Slug */}
-                <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
-                  {course.slug}
-                </td>
-
-                {/* Total Lessons */}
-                <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
-                  {course.lessons}
-                </td>
-
-                {/* Position */}
-                <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
-                  <div className="flex items-center gap-4">
-                    <button className="px-3 text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300">
-                      ▲
-                    </button>
-                    <button className="px-3 text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300">
-                      ▼
-                    </button>
-                  </div>
-                </td>
-
-                {/* Actions */}
-                <td className="px-8 py-4 text-lg font-medium border-b border-gray-300 dark:border-gray-600">
-                  <div className="flex space-x-6">
-                    {/* Edit Button */}
-                    <button className="transition-all duration-300 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none text-xl">
-                      <RiImageEditFill className="w-6 h-6" />
-                    </button>
-
-                    {/* Delete Button */}
-                    <button className="transition-all duration-300 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 focus:outline-none text-xl">
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader"></div>
+          </div>
+        ) : (
+          <table className="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600">
+            <thead className="bg-gray-200 dark:bg-gray-700">
+              <tr>
+                {[
+                  "Genre Name",
+                  "Description",
+                  "Total Practice Tests",
+                  "Action",
+                ].map((header, index) => (
+                  <th
+                    key={index}
+                    className="px-8 py-4 text-left text-lg font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-300 dark:border-gray-600 dark:text-gray-300"
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
+              {categories.map((category, index) => (
+                <tr key={index}>
+                  {/* Genre Name */}
+                  <td className="px-8 py-4 text-lg font-medium text-gray-900 border-b border-gray-300 dark:border-gray-600 dark:text-gray-200">
+                    {category.name}
+                  </td>
+
+                  {/* Description */}
+                  <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
+                    {category.description}
+                  </td>
+
+                  {/* Total Practice Tests */}
+                  <td className="px-8 py-4 text-lg text-gray-500 border-b border-gray-300 dark:border-gray-600 dark:text-gray-400">
+                    {category.totalPracticeTests}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-8 py-4 text-lg font-medium border-b border-gray-300 dark:border-gray-600">
+                    <div className="flex space-x-6">
+                      {/* Edit Button */}
+                      <button className="transition-all duration-300 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none text-xl">
+                        <RiImageEditFill className="w-6 h-6" />
+                      </button>
+
+                      {/* Delete Button */}
+                      <button className="transition-all duration-300 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 focus:outline-none text-xl">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
