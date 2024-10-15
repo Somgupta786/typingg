@@ -60,6 +60,7 @@ const SignIn = () => {
         //  console.log(result);
         if (typeof window !== 'undefined') {
           localStorage.setItem("accessToken", result.data.accessToken);
+          console.log(result.data.accessToken)
         }
 
         

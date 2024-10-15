@@ -1,64 +1,82 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
-import { FaCheck, FaHome } from "react-icons/fa";
+import { FaCheck, FaHome, FaTrash } from "react-icons/fa";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 
 const Page = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [titleAndDescription, setTitleAndDescription] = useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
-  const [difficulty, setDifficulty] = useState("Beginner");
-  const [sections, setSections] = useState([
-    { title: "", description: "", layout: "BoxLayout" },
-  ]);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [sections, setSections] = useState([{ title: "", embedCode: "" }]);
   const [loading, setLoading] = useState(false);
-
   const [theme, setTheme] = useState("light");
+  const [categories, setCategories] = useState([]);
+
+  // Retrieve categories from the API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("https://typing.varankit.tech/api/v1/categories");
+        if (response.data.success) {
+          setCategories(response.data.data.categories);
+          setCategoryName(response.data.data.categories[0].name); // Default to the first category
+          setCategoryId(response.data.data.categories[0].id); // Set the default category ID
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Retrieve theme from local storage and apply it
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const storedTheme = localStorage.getItem("theme");
-    
-    
-    if (storedTheme) {
-      setTheme(storedTheme);
-      document.documentElement.classList.toggle("dark", storedTheme === "dark");
+      if (storedTheme) {
+        setTheme(storedTheme);
+        document.documentElement.classList.toggle("dark", storedTheme === "dark");
+      }
     }
-  }
   }, []);
 
   const handleSubmit = async () => {
     const data = {
       title,
       description,
+      titleAndDescription: `${title} - ${description}`,
       metaTitle,
+      categoryId, // Use the selected category ID
       metaDescription,
-      difficulty,
+      categoryName,
       chapters: sections.map((section) => ({
         title: section.title,
-        description: section.description,
-        layout: section.layout,
+        embedCode: section.embedCode,
+        layout: "BoxLayout", // You can change this as needed
       })),
     };
 
     setLoading(true);
     try {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const token = localStorage.getItem("accessToken");
+        const response = await axios.post("https://typing.varankit.tech/api/v1/admin/practice-test", data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        toast.success("Lesson Added Successfully");
+        setTimeout(() => {
+          window.location.href = "/admin/dashboard/typingLesson/addLesson";
+        }, 1000);
       }
-      
-      const response = await axios.post("https://api.typedojo.com/lesson", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      toast.success("Lesson Added Successfully");
-      setTimeout(() => {
-        window.location.href = "/admin/dashboard";
-      }, 1000);
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error("Error in submission");
@@ -67,23 +85,25 @@ const Page = () => {
     }
   };
 
-  const handleTitleChange = (index, newTitle) => {
+  const handleSectionChange = (index, field, value) => {
     const updatedSections = [...sections];
-    updatedSections[index].title = newTitle;
-    setSections(updatedSections);
-  };
-
-  const handleDescriptionChange = (index, newDescription) => {
-    const updatedSections = [...sections];
-    updatedSections[index].description = newDescription;
+    updatedSections[index][field] = value;
     setSections(updatedSections);
   };
 
   const handleAddSection = () => {
-    setSections([
-      ...sections,
-      { title: "", description: "", layout: "BoxLayout" },
-    ]);
+    setSections([...sections, { title: "", embedCode: "" }]);
+  };
+
+  const handleDeleteSection = (index) => {
+    const updatedSections = sections.filter((_, i) => i !== index);
+    setSections(updatedSections);
+  };
+
+  const handleCategoryChange = (e) => {
+    const selectedCategory = categories.find(category => category.name === e.target.value);
+    setCategoryName(selectedCategory.name);
+    setCategoryId(selectedCategory.id);
   };
 
   return (
@@ -115,7 +135,7 @@ const Page = () => {
       <div className="flex p-6 space-x-6 md:flex-col">
         {/* Form */}
         <div className="flex-1 space-y-8">
-          {/* Lesson Overview */}
+          {/* Title and Description Block */}
           <div className={`p-6 shadow-md rounded-md ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"} transition-all duration-300 ease-in-out hover:shadow-lg`}>
             <h2 className="text-2xl font-semibold mb-4 text-green-600">Lesson Overview</h2>
             <div>
@@ -124,7 +144,7 @@ const Page = () => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className={`w-full p-4 mb-6 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
+                className={`w-full p-4 mb-2 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
               />
             </div>
             <div>
@@ -136,57 +156,92 @@ const Page = () => {
                 rows="3"
               />
             </div>
-          </div>
-
-          {/* Title and Description */}
-          <div className={`p-6 shadow-md rounded-md ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"} transition-all duration-300 ease-in-out hover:shadow-lg`}>
-            <h2 className="text-2xl font-semibold mb-4 text-green-600">Title and Description</h2>
-            <input
-              type="text"
-              value={metaTitle}
-              onChange={(e) => setMetaTitle(e.target.value)}
-              className={`w-full p-4 text-lg rounded-md mb-6 ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
-            />
-            <input
-              type="text"
-              value={metaDescription}
-              onChange={(e) => setMetaDescription(e.target.value)}
-              className={`w-full p-4 text-lg rounded-md mb-6 ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
-            />
-          </div>
-
-          {/* Sections */}
-          {sections.map((section, index) => (
-            <div key={index} className={`p-6 shadow-md rounded-md ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"} transition-all duration-300 ease-in-out hover:shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4 text-green-500">Section {index + 1}</h2>
-              <div className="mb-4">
-                <label className="block mb-2 text-lg font-medium">Title</label>
-                <input
-                  type="text"
-                  value={section.title}
-                  onChange={(e) => handleTitleChange(index, e.target.value)}
-                  className={`w-full p-4 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2 text-lg font-medium">Description</label>
-                <textarea
-                  value={section.description}
-                  onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                  className={`w-full p-4 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
-                  rows="3"
-                />
-              </div>
+            <div>
+              <label className="block mb-2 text-lg font-medium">Title and Description</label>
+              <input
+                type="text"
+                value={titleAndDescription}
+                onChange={(e) => setTitleAndDescription(e.target.value)}
+                className={`w-full p-4 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
+              />
             </div>
-          ))}
+          </div>
 
-          {/* Add Section */}
-          <div className="flex justify-center">
-            <button
-              onClick={handleAddSection}
-              className="transition-all duration-300 ease-in-out w-64 h-[3rem] bg-green-500 text-white rounded-md hover:bg-[#1a74b9] focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          {/* Metadata Block */}
+          <div className={`p-6 shadow-md rounded-md ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"} transition-all duration-300 ease-in-out hover:shadow-lg`}>
+            <h2 className="text-2xl font-semibold mb-4 text-green-600">Meta Data</h2>
+            <div>
+              <label className="block mb-2 text-lg font-medium">Meta Title</label>
+              <input
+                type="text"
+                value={metaTitle}
+                onChange={(e) => setMetaTitle(e.target.value)}
+                className={`w-full p-4 mb-6 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-lg font-medium">Meta Description</label>
+              <textarea
+                value={metaDescription}
+                onChange={(e) => setMetaDescription(e.target.value)}
+                className={`w-full p-4 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
+                rows="3"
+              />
+            </div>
+          </div>
+
+          {/* Category Selection */}
+          <div className={`p-6 shadow-md rounded-md ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-800"} transition-all duration-300 ease-in-out hover:shadow-lg`}>
+            <h2 className="text-2xl font-semibold mb-4 text-green-600">Select Category</h2>
+            <select
+              value={categoryName}
+              onChange={handleCategoryChange}
+              className={`w-full p-4 mb-2 text-lg rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-gray-50 border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
             >
-              Add New Section
+              {categories.map((category) => (
+                <option key={category.id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sections Block */}
+          {/* Sections */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-green-600">Sections</h2>
+            {sections.map((section, index) => (
+              <div key={index} className={`border p-4 mb-4 rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-800"}`}>
+                <div className="flex justify-between">
+                  <div className="flex-1">
+                    <label className="block mb-2 text-lg font-medium">Section Title</label>
+                    <input
+                      type="text"
+                      value={section.title}
+                      onChange={(e) => handleSectionChange(index, "title", e.target.value)}
+                      className={`w-full p-2 text-lg rounded-md ${theme === "dark" ? "bg-gray-600 border-gray-500 text-gray-200" : "bg-white border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
+                    />
+                  </div>
+                  <button onClick={() => handleDeleteSection(index)} className="ml-2 p-2 text-red-500 hover:text-red-700">
+                    <FaTrash />
+                  </button>
+                </div>
+                <div>
+                  <label className="block mb-2 text-lg font-medium">Embed Code</label>
+                  <textarea
+                    value={section.embedCode}
+                    onChange={(e) => handleSectionChange(index, "embedCode", e.target.value)}
+                    className={`w-full p-2 text-lg rounded-md ${theme === "dark" ? "bg-gray-600 border-gray-500 text-gray-200" : "bg-white border-gray-300 text-gray-700"} transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500`}
+                    rows="4"
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              className={`mt-4 p-2 text-lg font-semibold rounded-md bg-green-500 text-white hover:bg-green-600 transition-all duration-300`}
+              onClick={handleAddSection}
+            >
+              Add Section
             </button>
           </div>
         </div>

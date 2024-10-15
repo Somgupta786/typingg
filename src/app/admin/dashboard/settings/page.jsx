@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { useState, useEffect } from "react";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { Toaster, toast } from "react-hot-toast";
@@ -14,7 +14,7 @@ const Page = () => {
   const [logoImage, setLogoImage] = useState("");
   const [defaultLanguage, setDefaultLanguage] = useState("English");
   const [defaultTimeZone, setDefaultTimeZone] = useState("UTC");
-  const [useSeoFriendlyUrls, setUseSeoFriendlyUrls] = useState(true);
+  const [useSEOFriendlyUrls, setUseSEOFriendlyUrls] = useState(true);
   const [discourageSearchEngines, setDiscourageSearchEngines] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState(false);
   const [maintainenceMode, setMaintainenceMode] = useState(false);
@@ -77,59 +77,58 @@ const Page = () => {
 
   const handleSaveChanges = async () => {
     if (!validateForm()) {
-      toast.error("Please fill in all required fields before submitting.");
-      return;
+        toast.error("Please fill in all required fields before submitting.");
+        return;
     }
 
-    const data = {
-      siteTitle,
-      metaDescription,
-      logoImage,
-      defaultLanguage,
-      defaultTimeZone,
-      useSeoFriendlyUrls,
-      discourageSearchEngines,
-      videoThumbnail,
-      maintainenceMode,
-      maintainenceMessage,
-      euCookieNotification,
-      htmlCode,
-      analyticsTrackingCode,
-    };
+    const formData = new FormData();
+    formData.append("siteTitle", siteTitle);
+    formData.append("metaDescription", metaDescription);
+    if (logoImage) {
+        formData.append("logoImage", logoImage);
+    }
+    formData.append("defaultLanguage", defaultLanguage);
+    formData.append("defaultTimeZone", defaultTimeZone);
+    formData.append("useSEOFriendlyUrls", useSEOFriendlyUrls);
+    formData.append("discourageSearchEngines", discourageSearchEngines);
+    formData.append("maintainenceMode", maintainenceMode);
+    formData.append("maintainenceMessage", maintainenceMessage);
+    formData.append("euCookieNotification", euCookieNotification);
+    formData.append("analyticsTrackingCode", analyticsTrackingCode);
 
-    // Moved token initialization outside of the if block
     let token = "";
     if (typeof window !== "undefined") {
-      token = localStorage.getItem("accessToken");
+        token = localStorage.getItem("accessToken");
     }
 
     try {
-      setLoading(true);
-      const response = await axios.put(
-        "https://typing.varankit.tech/api/v1/admin/settings",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+        setLoading(true);
+        const response = await axios.put(
+            "https://typing.varankit.tech/api/v1/admin/settings",
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
 
-      if (response.status === 200) {
-        toast.success("Settings saved successfully!");
-        setTimeout(() => {
-          window.location.href = "/admin/dashboard/settings";
-        }, 1000);
-      } else {
-        toast.error("Failed to save settings.");
-      }
+        if (response.status === 200) {
+            toast.success("Settings saved successfully!");
+            setTimeout(() => {
+                window.location.href = "/admin/dashboard/settings";
+            }, 1000);
+        } else {
+            toast.error("Failed to save settings.");
+        }
     } catch (error) {
-      toast.error("An error occurred while saving settings.");
+        toast.error("An error occurred while saving settings.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   const toggleTheme = () => {
     if (typeof window !== "undefined") {
@@ -149,9 +148,9 @@ const Page = () => {
           : "bg-gray-50 text-gray-800"
       }`}
     >
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverSEOrder={false} />
 
-      {/* Header */}
+      
       <div
         className={`flex justify-between p-5 border-b-2 ${
           theme === "dark"
@@ -186,7 +185,7 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Breadcrumb */}
+      
       <div
         className={`flex justify-between p-3 border-b-2 text-sm ${
           theme === "dark"
@@ -200,7 +199,7 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+     
       <div className="flex p-6 space-x-6 md:flex-col">
         {/* Form */}
         <div className="flex-1 space-y-8">
@@ -318,13 +317,13 @@ const Page = () => {
             <div className="flex items-center mb-6 border-b-2 border-gray-200 pb-4">
               <input
                 type="checkbox"
-                id="seoFriendlyUrls"
-                checked={useSeoFriendlyUrls}
-                onChange={(e) => setUseSeoFriendlyUrls(e.target.checked)}
+                id="SEOFriendlyUrls"
+                checked={useSEOFriendlyUrls}
+                onChange={(e) => setUseSEOFriendlyUrls(e.target.checked)}
                 className="mr-4 text-green-600 transition-all duration-300 ease-in-out transform scale-110"
               />
               <label
-                htmlFor="seoFriendlyUrls"
+                htmlFor="SEOFriendlyUrls"
                 className="text-lg font-medium text-gray-700 hover:text-green-600"
               >
                 SEO Friendly URLs
@@ -348,7 +347,7 @@ const Page = () => {
             </div>
 
             {/* Video Thumbnail */}
-            <div className="flex items-center mb-6 border-b-2 border-gray-200 pb-4">
+            {/* <div className="flex items-center mb-6 border-b-2 border-gray-200 pb-4">
               <input
                 type="checkbox"
                 id="videoThumbnail"
@@ -362,7 +361,7 @@ const Page = () => {
               >
                 Enable Video Thumbnail
               </label>
-            </div>
+            </div> */}
           </div>
 
           {/* Maintenance Mode */}
@@ -439,7 +438,7 @@ const Page = () => {
           </div>
 
           {/* HTML Code */}
-          <div
+          {/* <div
             className={`p-6 shadow-md rounded-md ${
               theme === "dark"
                 ? "bg-gray-800 text-gray-200"
@@ -462,7 +461,7 @@ const Page = () => {
                 rows="4"
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Analytics Tracking Code */}
           <div
