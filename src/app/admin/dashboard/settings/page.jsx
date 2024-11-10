@@ -104,7 +104,7 @@ const Page = () => {
     try {
         setLoading(true);
         const response = await axios.put(
-            "https://typing.varankit.tech/api/v1/admin/settings",
+            "https://typing.varankit.me/api/v1/admin/settings",
             formData,
             {
                 headers: {

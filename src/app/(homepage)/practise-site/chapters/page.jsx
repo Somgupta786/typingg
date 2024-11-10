@@ -6,6 +6,9 @@ import { setChapters } from "@/features/practise/practiseSlice";
 import { endpoints } from "@/services/apis";
 import { checkTokenExpiration } from "@/utils/authUtils";
 import { apiConnector } from "@/services/apiConnector";
+import { useRouter, usePathname } from 'next/navigation';
+
+
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -13,6 +16,7 @@ const Page = () => {
   const practiseTest = useSelector((state) => state.practiseTest);
   const [chaptersData, setChaptersData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchChapters = async () => {
@@ -38,6 +42,7 @@ const Page = () => {
         );
 
         if (response.data.success) {
+          
           setChaptersData(response.data.data);
         }
       } catch (error) {
@@ -87,7 +92,17 @@ const Page = () => {
                   </div>
                 </div>
                 <div>
-                  <button className="self-center px-8 py-2 bg-transparent border border-gray-500 text-white rounded-lg hover:bg-gray-700 transition">
+                  <button
+                    className="self-center px-8 py-2 bg-transparent border border-gray-500 text-white rounded-lg hover:bg-gray-700 transition"
+                    onClick={() => {
+                      dispatch(setChapters(chapter));
+                      if(chapter.layout=="BoxLayout"){router.push("/trial3");}
+                      else{
+                        {router.push("/trial");}
+                      }
+                      
+                    }}
+                  >
                     Start
                   </button>
                 </div>

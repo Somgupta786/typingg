@@ -196,15 +196,17 @@ const Page = () => {
           </div>
         </div>
         <div
-          className={`px-6 py-3 bg-Primary font-bold text-[24px] text-black w-[100%] text-center rounded-lg ${
+          className={`px-6  bg-Primary font-bold text-[24px] text-black w-[100%] text-center rounded-lg ${
             isFormValid && !loading ? "brightness-100" : "brightness-50"
           }`}
         >
           <button
-            type="submit"
-            className="border-none bg-transparent"
-            disabled={!isFormValid || loading} // Disable button during loading or if form is invalid
-          >
+          type="submit"
+          className={`px-6 py-3 bg-transparent font-bold text-[24px] text-black w-[100%] text-center rounded-lg ${
+            isFormValid && !loading ? "brightness-100" : "brightness-50"
+          }`}
+          disabled={!isFormValid || loading} // Disable button during loading or if form is invalid
+        >
             {loading ? "Loading..." : "Log in"}
           </button>
         </div>

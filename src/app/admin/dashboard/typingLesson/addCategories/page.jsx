@@ -68,7 +68,7 @@ const Page = () => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://typing.varankit.tech/api/v1/categories");
+        const response = await fetch("https://typing.varankit.me/api/v1/categories");
         const data = await response.json();
         if (data.success) {
           setCategories(data.data.categories);

@@ -1,4 +1,4 @@
 import axios from "axios";
 export default axios.create({
-      baseURL: 'https://typing.varankit.tech/'
+      baseURL: 'https://typing.varankit.me/'
 })

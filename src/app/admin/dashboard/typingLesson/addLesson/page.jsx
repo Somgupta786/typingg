@@ -21,7 +21,7 @@ const Page = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("https://typing.varankit.tech/api/v1/categories");
+        const response = await axios.get("https://typing.varankit.me/api/v1/categories");
         if (response.data.success) {
           setCategories(response.data.data.categories);
           setCategoryName(response.data.data.categories[0].name); // Default to the first category
@@ -67,7 +67,7 @@ const Page = () => {
     try {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("accessToken");
-        const response = await axios.post("https://typing.varankit.tech/api/v1/admin/practice-test", data, {
+        const response = await axios.post("https://typing.varankit.me/api/v1/admin/practice-test", data, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

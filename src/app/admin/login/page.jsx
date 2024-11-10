@@ -44,7 +44,7 @@ const SignIn = () => {
         // console.log("Request Body:", requestBody);
 
         const response = await fetch(
-          "https://typing.varankit.tech/api/v1/auth/admin/signIn",
+          "https://typing.varankit.me/api/v1/auth/admin/signIn",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

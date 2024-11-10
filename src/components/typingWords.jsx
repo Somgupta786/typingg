@@ -140,19 +140,22 @@
 // export default TypingTest;
  "use client";
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 const TypingTest = () => {
   // Sample text for the typing test
-  const textToType =
-    "ddd lll kkk ddd lll kkk lalala kalakalakala aaaa lllll kkkk dddd ffff gggg kkkk ddd lll kkk ddd lll kkk lalala kalakalakala aaaa lllll kkkk dddd ffff gggg kkkk";
+  
 
   // State to track user input, progress, and WPM
+  const practiseTest = useSelector((state) => state.practiseTest);
+  const dispatch = useDispatch();
   const [userInput, setUserInput] = useState("");
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [startTime, setStartTime] = useState(null);
-
+console.log(practiseTest)
+const textToType = practiseTest?.chapters?.embedCode || ""; 
   // Function to calculate WPM based on correct characters
   const calculateWPM = (correctChars, timeInMinutes) => {
     const wordsTyped = Math.floor(correctChars / 5);
