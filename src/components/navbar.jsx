@@ -3,6 +3,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Modal from "@mui/material/Modal";
 import { useRef, useState } from "react";
 
+
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
@@ -20,8 +21,8 @@ const Navbar = () => {
   const handleClose = () => setOpen(false);
 
   const navItems = [
-    { label: "Speed Test", path: "/trial/results" },
-    { label: "Play Games", path: "" },
+    { label: "Speed Test", path: "/speed-test" },
+    { label: "Play Games", path: "/games" },
     { label: "Race", path: "" },
     { label: "Practice", path: "/practise-site" },
     { label: "Leaderboard", path: "/leaderboard" },

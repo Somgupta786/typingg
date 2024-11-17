@@ -9,6 +9,24 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'text-gradient': 'linear-gradient(90deg, #D5E94E 0%, #E94EB6 100%)',
+      },
+      boxShadow: {
+        'custom-inset': '0px 2.68px 0.89px 0px rgba(255, 255, 255, 0.15) inset',
+        'outer-custom': '0px 1.79px 0px 0px #191A1F', 
+      },
+      keyframes: {
+        gradient: {
+          "0%": { backgroundImage: "linear-gradient(90deg, #E94EB6 0%, #624EE9 100%)" },
+          "33%": { backgroundImage: "linear-gradient(90deg, #624EE9 0%, #E9A04E 100%)" },
+          "66%": { backgroundImage: "linear-gradient(90deg, #E9A04E 0%, #78E94E 100%)" },
+          "100%": { backgroundImage: "linear-gradient(90deg, #E94EB6 0%, #624EE9 100%)" },
+        },
+      },
+      animation: {
+        gradient: "gradient 5s infinite", // Adjust timing as needed
+      },
       fontFamily: {
         ocra: ["OCR A Extended", "sans-serif"],
       },
