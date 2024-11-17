@@ -96,7 +96,7 @@ const Page = () => {
                     className="self-center px-8 py-2 bg-transparent border border-gray-500 text-white rounded-lg hover:bg-gray-700 transition"
                     onClick={() => {
                       dispatch(setChapters(chapter));
-                      if(chapter.layout=="BoxLayout"){router.push("/trial3");}
+                      if(chapter.layout=="BoxLayout"){router.push("/trial");}
                       else{
                         {router.push("/trial");}
                       }

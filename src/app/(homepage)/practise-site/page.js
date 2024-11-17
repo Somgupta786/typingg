@@ -144,7 +144,7 @@ const Page = () => {
                         {/* Progress Bar */}
                         <div
                           className="absolute top-0 left-0 h-full rounded-3xl bg-[#D5E94E]"
-                          style={{ width: `${item.progress}%` }}
+                          style={{ width: `${item.progress+2}%` }}
                         ></div>
                       </div>
                     </div>

@@ -1,172 +1,89 @@
-// "use client";
-// import React, { useState, useEffect } from "react";
-
-// const TypingTest = () => {
-//   // Sample text for the typing test
-//   const textToType =
-//     "ddd lll kkk ddd lll kkk llakalakala aaaa lllll kkkk dddd ffff gggg kkkk";
-
-//   // State to track user input, progress, and WPM
-//   const [userInput, setUserInput] = useState("");
-//   const [currentCharIndex, setCurrentCharIndex] = useState(0);
-//   const [progress, setProgress] = useState(0);
-//   const [wpm, setWpm] = useState(0);
-//   const [startTime, setStartTime] = useState(null);
-
-//   // Function to calculate WPM based on correct words
-//   const calculateWPM = (correctChars, timeInMinutes) => {
-//     const wordsTyped = Math.floor(correctChars / 5); // Average word length is 5 characters
-//     return Math.round(wordsTyped / timeInMinutes);
-//   };
-
-//   // Handle key press events
-//   const handleKeyPress = (e) => {
-//     const { key } = e;
-
-//     // Handle backspace for character deletion
-//     if (key === "Backspace") {
-//       if (currentCharIndex > 0) {
-//         setCurrentCharIndex(currentCharIndex - 1);
-//         setUserInput(userInput.slice(0, -1));
-//       }
-//       return;
-//     }
-
-//     // Process character input
-//     if (currentCharIndex < textToType.length || key !== "Backspace") {
-//       const isCorrect = textToType[currentCharIndex] === key; // Check if the input is correct
-//       setCurrentCharIndex(currentCharIndex + 1);
-//       setUserInput(userInput + key);
-
-//       // Start timer on first key press
-//       if (!startTime) {
-//         setStartTime(Date.now());
-//       }
-
-//       // Calculate correct characters
-//       const correctChars = userInput.split("").filter((char, index) => char === textToType[index] && char !== ' ').length;
-
-//       // Calculate WPM based on elapsed time
-//       const timeInMinutes = (Date.now() - startTime) / 60000;
-//       if (timeInMinutes > 0) {
-//         setWpm(calculateWPM(correctChars, timeInMinutes));
-//       }
-//     }
-    
-//     // Calculate progress percentage
-//     const progressPercentage = Math.min(
-//       ((userInput.length + 1) / textToType.length) * 100,
-//       100
-//     );
-//     setProgress(progressPercentage);
-//   };
-
-//   // Function to determine letter class for styling
-//   const getCharClass = (char, index) => {
-//     if (index < currentCharIndex) {
-//       // Letter is already typed
-//       return char === userInput[index] 
-//         ? "text-white" // Correctly typed
-//         : "bg-red-500 text-white"; // Incorrectly typed
-//     }
-//     if (index === currentCharIndex) {
-//       return "text-white border-l-2 border-white"; // Current letter being typed
-//     }
-//     return "text-gray-500"; // Letter not yet typed
-//   };
-
-//   // Add event listener for key presses
-//   useEffect(() => {
-//     window.addEventListener("keydown", handleKeyPress);
-//     return () => {
-//       window.removeEventListener("keydown", handleKeyPress);
-//     };
-//   }, [currentCharIndex, userInput]);
-
-//   // Filter out spaces for letter blocks
-//   const letters = textToType.split("").filter((char) => char !== " ");
-
-//   return (
-//     <div className="min-h-screen flex flex-col items-center bg-black text-white justify-center mt-10">
-//       {/* Progress tracker */}
-//       <div className="min-w-[800px] mb-8">
-//         <div className="relative h-1 bg-gray-700 rounded-full">
-//           <div
-//             className="h-1 bg-white rounded-full"
-//             style={{ width: `${progress}%` }}
-//           ></div>
-//           <div
-//             className={`absolute left-0 top-[-2px] w-2 h-2 rounded-full ${
-//               progress > 0 ? "bg-white" : "bg-gray-500"
-//             } transition-all duration-300`}
-//             style={{ left: `calc(${progress}% - 0.225rem)` }}
-//           ></div>
-//           <div
-//             className={`absolute left-0 top-[-100px] flex flex-col items-center rounded-full transition-all duration-300`}
-//             style={{ left: `calc(${progress}% - 1.125rem)` }}
-//           >
-//             <div className="text-white">{wpm} WPM</div>
-//             <img src="/user.svg" alt="User Icon" />
-//             <div>Preet</div>
-//           </div>
-//           <div
-//             className={`absolute right-0 top-[-2px] w-2 h-2 rounded-full ${
-//               progress >= 100 ? "bg-white" : "bg-gray-500"
-//             } transition-all duration-300`}
-//             style={{ left: `calc(100% - 0.25rem)` }}
-//           ></div>
-//         </div>
-//         <div className="flex justify-between text-sm text-gray-400 mt-2">
-//           <span>Start</span>
-//           <span>End</span>
-//         </div>
-//       </div>
-
-//       {/* Typing area */}
-//       <div className="flex flex-wrap gap-[30px]">
-//         {letters.map((char, index) => (
-//           <span
-//             key={index}
-//             className={`flex items-center justify-center w-[80px] h-[80px] bg-black border border-gray-500 rounded-[8px] text-[30px] ${getCharClass(char, index)}`}
-//           >
-//             {char}
-//           </span>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TypingTest;
- "use client";
+"use client";
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import {
+  setTypedWpm,
+  setAccuracy,
+  setTotalTime,
+  setTypedTotalCorrectChars,
+  setTypedTotalIncorrectChars,
+  setTypedTotalExtraChars,
+  setTypedMissedChars,
+  setTypedRawChars,
+  setKeyStats
+} from "@/features/result/resultSlice";
+import { useDispatch } from "react-redux";
 
 const TypingTest = () => {
-  // Sample text for the typing test
-  
-
-  // State to track user input, progress, and WPM
   const practiseTest = useSelector((state) => state.practiseTest);
-  const dispatch = useDispatch();
   const [userInput, setUserInput] = useState("");
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [startTime, setStartTime] = useState(null);
-console.log(practiseTest)
-const textToType = practiseTest?.chapters?.embedCode || ""; 
-  // Function to calculate WPM based on correct characters
-  const calculateWPM = (correctChars, timeInMinutes) => {
-    const wordsTyped = Math.floor(correctChars / 5);
-    return Math.round(wordsTyped / timeInMinutes);
+  const [endTime, setEndTime] = useState(null); // Store the end time when the test finishes
+  const [timer, setTimer] = useState(0); // Timer value in seconds
+  const [totalCorrectChars, setTotalCorrectChars] = useState(0);
+  const [totalIncorrectChars, setTotalIncorrectChars] = useState(0);
+  const [extraChars, setExtraChars] = useState(0);
+  const [isKeyboardOn, setIsKeyboardOn] = useState(false);
+  const [isHandsOn, setIsHandsOn] = useState(false);
+  const [isSoundEffectOn, setIsSoundEffectOn] = useState(false);
+  const [missedChars, setMissedChars] = useState(0);
+  const [charMistakes, setCharMistakes] = useState([]);
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const textToType = practiseTest?.chapters?.embedCode || "";
+  console.log(practiseTest)
+
+  // Calculate metrics and navigate to results page
+  const calculateResults = () => {
+    const timeInMinutes = timer / 60;
+    const wordsTyped = Math.floor(totalCorrectChars / 5);
+    const accuracy =
+      totalCorrectChars /
+      (totalCorrectChars + totalIncorrectChars + extraChars);
+    const results = {
+      wpm: Math.round(wordsTyped / timeInMinutes) || 0,
+      accuracy: (accuracy * 100).toFixed(2),
+      totalTime: timer,
+      totalRawWordsTyped: Math.floor(userInput.length / 5),
+      totalCorrectChars,
+      totalIncorrectChars,
+      totalExtraChars: extraChars,
+      missedChars,
+    };
+
+   
+    // Dispatch the results to Redux store
+
+    dispatch(setTypedWpm(results.wpm));
+    dispatch(setAccuracy(results.accuracy));
+    dispatch(setTotalTime(results.totalTime));
+    dispatch(setTypedTotalCorrectChars(results.totalCorrectChars));
+    dispatch(setTypedTotalIncorrectChars(results.totalIncorrectChars));
+    dispatch(setTypedMissedChars(results.missedChars));
+    dispatch(setTypedRawChars(results.totalRawWordsTyped));
+    dispatch(setTypedTotalExtraChars(results.totalExtraChars));
+    dispatch(setKeyStats(charMistakes));
+    router.push("/trial/results");
   };
 
   // Handle key press events
   const handleKeyPress = (e) => {
     const { key } = e;
 
-    // Handle backspace for character deletion
+    const wordsTyped = Math.floor(totalCorrectChars / 5);
+    const timeInMinutes = timer / 60;
+    setWpm(Math.round(wordsTyped / timeInMinutes) || 0);
+
+    if (!startTime) {
+      setStartTime(Date.now());
+    }
+
+    // Handle backspace
     if (key === "Backspace") {
       if (currentCharIndex > 0) {
         setCurrentCharIndex(currentCharIndex - 1);
@@ -175,46 +92,71 @@ const textToType = practiseTest?.chapters?.embedCode || "";
       return;
     }
 
-    // Process character input
-    if (currentCharIndex < textToType.length || key !== "Backspace") {
-      setCurrentCharIndex(currentCharIndex + 1);
-      setUserInput(userInput + key);
+    // If key is pressed after completing the text, ignore
+    if (currentCharIndex >= textToType.length) {
+      setExtraChars(extraChars + 1);
+      return;
     }
 
-    // Calculate progress percentage
+    // Process key input
+    setUserInput(userInput + key);
+
+    if (key === textToType[currentCharIndex]) {
+      setTotalCorrectChars(totalCorrectChars + 1);
+    } else {
+      setTotalIncorrectChars(totalIncorrectChars + 1);
+      if (currentCharIndex < textToType.length) {
+        setMissedChars(missedChars + 1); // Add missed char to missedChars
+        // Update mistake count for this character
+        const char = textToType[currentCharIndex].toLowerCase();
+        if (/^[a-zA-Z]$/.test(char)) {
+          setCharMistakes((prevMistakes) => {
+            const existingMistake = prevMistakes.find((mistake) => mistake.key === char);
+            if (existingMistake) {
+              // Update difficulty score
+              return prevMistakes.map((mistake) =>
+                mistake.key === char
+                  ? { ...mistake, difficultyScore: mistake.difficultyScore + 1 }
+                  : mistake
+              );
+            } else {
+              // Add new mistake record
+              return [
+                ...prevMistakes,
+                { key: char, difficultyScore: 1 }
+              ];
+            }
+          });
+        }
+      }
+    }
+
+    setCurrentCharIndex(currentCharIndex + 1);
+
     const progressPercentage = Math.min(
-      ((userInput.length + 1) / textToType.length) * 100,
+      ((currentCharIndex + 1) / textToType.length) * 100,
       100
     );
     setProgress(progressPercentage);
 
-    // Count correct characters and update WPM
-    const correctChars = userInput.split("").filter((char, index) => char === textToType[index]).length;
-
-    // Start timer on first key press
-    if (!startTime) {
-      setStartTime(Date.now());
-    }
-
-    // Calculate WPM based on elapsed time
-    const timeInMinutes = (Date.now() - startTime) / 60000;
-    if (timeInMinutes > 0) {
-      setWpm(calculateWPM(correctChars, timeInMinutes));
+    // Check if test is complete
+    if (currentCharIndex + 1 === textToType.length) {
+      setEndTime(Date.now());
+      calculateResults();
     }
   };
 
-  // Function to determine character class for styling
-  const getCharClass = (char, index) => {
-    if (index < currentCharIndex) {
-      return char === userInput[index] ? "text-white" : "text-red-500";
+  // Timer effect
+  useEffect(() => {
+    if (startTime && !endTime) {
+      const interval = setInterval(() => {
+        setTimer((prevTime) => prevTime + 1);
+      }, 1000);
+      return () => clearInterval(interval);
     }
-    if (index === currentCharIndex) {
-      return "text-white border-l-2 border-white";
-    }
-    return "text-gray-500";
-  };
+  }, [startTime, endTime]);
 
-  // Add event listener for key presses
+  // Key press listener
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
     return () => {
@@ -223,9 +165,9 @@ const textToType = practiseTest?.chapters?.embedCode || "";
   }, [currentCharIndex, userInput]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-black text-white justify-center mt-10">
+    <div className="min-h-screen flex flex-col items-center gap-16 bg-black text-white">
       {/* Progress tracker */}
-      <div className="min-w-[800px] mb-8">
+      <div className="min-w-[800px] pt-[140px] min-h-[106px] ">
         <div className="relative h-1 bg-gray-700 rounded-full">
           <div
             className="h-1 bg-white rounded-full"
@@ -241,9 +183,9 @@ const textToType = practiseTest?.chapters?.embedCode || "";
             className={`absolute left-0 top-[-100px] flex flex-col items-center rounded-full transition-all duration-300`}
             style={{ left: `calc(${progress}% - 1.125rem)` }}
           >
-            <div className="text-white">{wpm} WPM</div>
+            <div className="text-white whitespace-nowrap">{wpm} WPM</div>
             <img src="/user.svg" alt="User Icon" />
-            <div>Preet</div>
+            <div>You</div>
           </div>
           <div
             className={`absolute right-0 top-[-2px] w-2 h-2 rounded-full ${
@@ -258,13 +200,99 @@ const textToType = practiseTest?.chapters?.embedCode || "";
         </div>
       </div>
 
-      {/* Typing area */}
-      <div className="leading-[46.5px] items-baseline justify-left text-[30px] font-normal">
+      <div className="leading-[46.5px] items-baseline text-[30px] font-normal self-start">
         {textToType.split("").map((char, index) => (
-          <span key={index} className={`${getCharClass(char, index)} mr-2`}>
+          <span
+            key={index}
+            className={`mr-2 ${
+              index < currentCharIndex
+                ? char === userInput[index]
+                  ? "text-white"
+                  : "text-red-500"
+                : index === currentCharIndex
+                ? "text-white border-l-2 border-white"
+                : "text-gray-500"
+            }`}
+          >
             {char}
           </span>
         ))}
+      </div>
+      <div className="self-start mt-[200px] ">
+        <div className="text-xl min-w-[277px] flex flex-col p-6 bg-[#1A1A1A] rounded-xl text-white gap-10">
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <div>Keyboard</div>
+              <div
+                className={`w-12 h-6 flex items-center ${
+                  isKeyboardOn ? "bg-[#D5E94E]" : "bg-gray-200"
+                } rounded-full p-1 cursor-pointer`}
+                onClick={() => setIsKeyboardOn(!isKeyboardOn)}
+              >
+                <div
+                  className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
+                    isKeyboardOn
+                      ? "translate-x-6 bg-black"
+                      : "translate-x-0 bg-black"
+                  }`}
+                ></div>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>Hands</div>
+              <div
+                className={`w-12 h-6 flex items-center ${
+                  isHandsOn ? "bg-[#D5E94E]" : "bg-gray-200"
+                } rounded-full p-1 cursor-pointer`}
+                onClick={() => setIsHandsOn(!isHandsOn)}
+              >
+                <div
+                  className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
+                    isHandsOn
+                      ? "translate-x-6 bg-black"
+                      : "translate-x-0 bg-black"
+                  }`}
+                ></div>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>Sound effect</div>
+              <div
+                className={`w-12 h-6 flex items-center ${
+                  isSoundEffectOn ? "bg-[#D5E94E]" : "bg-gray-200"
+                } rounded-full p-1 cursor-pointer`}
+                onClick={() => setIsSoundEffectOn(!isSoundEffectOn)}
+              >
+                <div
+                  className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
+                    isSoundEffectOn
+                      ? "translate-x-6 bg-black"
+                      : "translate-x-0 bg-black"
+                  }`}
+                ></div>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>Time taken</div>
+              <div className="flex items-center justify-center text-[#D5E94E]">
+                <span className="font-medium">{timer}</span>
+              </div>
+            </div>
+          </div>
+          <div className=" flex items-center gap-2 text-sm text-[#B0B0B0]">
+            <div className=" flex items-center gap-[2px]">
+              <div className="  p-2 rounded-lg border border-[#4F4F4F]">
+                Shift &nbsp;
+                <img className=" inline-block" src="/up.svg" />
+              </div>
+              <div>+</div>
+              <div className="  p-2 rounded-lg border border-[#4F4F4F]">
+                Space
+              </div>
+            </div>
+            <div>: &nbsp;Restart</div>
+          </div>
+        </div>
       </div>
     </div>
   );
