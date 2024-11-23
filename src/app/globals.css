@@ -51,3 +51,35 @@ body {
   }
 }
 
+.custom-dashed-border {
+  border-style: dashed;
+  border-width: 2px; /* Adjust the border thickness */
+  border-color: #4F4F4F;
+/* Adjust dash width */
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar {
+  padding-right: 6px; /* Creates 8px space between the content and scrollbar */
+}
+  /* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 13px; /* Scrollbar width */
+  border-radius: 13px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1A1A1A; /* Track background color */
+  border-radius: 8px; /* Rounded corners for track */
+  border: 2px solid #4F4F4F; /* Border for track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #D1D1D1; /* Thumb color */
+  border-radius: 8px; /* Rounded corners for thumb */
+  border: 2px solid #4F4F4F; /* Border around thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #B0B0B0; /* Darker color when hovering */
+}

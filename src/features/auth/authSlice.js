@@ -65,7 +65,7 @@ export const refreshToken = createAsyncThunk(
           console.log(refreshToken)
           const response = await axios.post(REFRESH_API, null, {
             headers: {
-              Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTEzMTB2cmYwMDAwcWMyMnV5MHh3dml3IiwiaWF0IjoxNzI2NDg5MTI5LCJleHAiOjE3MjczNTMxMjl9.i-M2U6XTTyQKfSldPhjFPPptIaLUdI8W5j0RnZuJsgQ"
+              Authorization: `Bearer ${refreshToken}`
             }
           });
           
@@ -156,7 +156,7 @@ const authSlice = createSlice({
         localStorage.setItem("tokenExpiration", newExpirationTime);
       })
       .addCase(refreshToken.rejected, (state, action) => {
-        toast.error("Failed to refresh token, please log in again");
+        toast.error("Session Expired, please log in again");
         state.error = action.payload;
         state.token = null;
         state.tokenExpiration = null;

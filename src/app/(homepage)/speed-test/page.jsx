@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar";
 import SpeedTest from "@/components/speedTest";
 import { useState } from "react";
 
+
 const Page = () => {
   const [selectedTime, setSelectedTime] = useState(15);
   const [getStarted, setGetStarted] = useState(false);

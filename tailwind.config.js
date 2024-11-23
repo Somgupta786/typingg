@@ -11,6 +11,7 @@ module.exports = {
     extend: {
       backgroundImage: {
         'text-gradient': 'linear-gradient(90deg, #D5E94E 0%, #E94EB6 100%)',
+        'text-gradient2': 'linear-gradient(180deg, #E6C300 0%, #FF8C00 100%)',
       },
       boxShadow: {
         'custom-inset': '0px 2.68px 0.89px 0px rgba(255, 255, 255, 0.15) inset',
@@ -54,5 +55,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+   
+  ],
 };

@@ -21,13 +21,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`w-screen min-h-screen relative overflow-x-hidden ${poppins.className}`}
+        className={`w-screen min-h-screen relative overflow-x-hidden ${poppins.className} select-none`}
       >
         <Provider store={store}>
           {" "}
           <GoogleOAuthProvider clientId="286890073941-1pu4m1gvl3cle29jnpv6qvkf04mu97m7.apps.googleusercontent.com">
             {" "}
-            <Toaster position="top-center" />
+            <Toaster position=" absolute top-center" />
             {children}
           </GoogleOAuthProvider>
         </Provider>

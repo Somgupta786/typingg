@@ -9,4 +9,8 @@ export const endpoints = {
   RESETPASSWORD_API: BASE_URL + "/auth/reset-password",
   ALLCATEGORY_API: BASE_URL + "/categories",
   PRACTISEBYNAME_API: BASE_URL + "/category/practice-test",
+  USERINFO_API: BASE_URL + "/user",
+  DAILYDATA_API:  BASE_URL + "/leaderboard/daily",
+  WEEKLYDATA_API:  BASE_URL + "/leaderboard/weekly",
+  MONTHLYDATA_API:  BASE_URL + "/leaderboard/monthly"
 };

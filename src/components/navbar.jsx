@@ -3,13 +3,13 @@ import { useRouter, usePathname } from "next/navigation";
 import Modal from "@mui/material/Modal";
 import { useRef, useState } from "react";
 
-
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
   const [open, setOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const userRef = useRef(null); // Reference to the username/avatar element
+  const [isKeyboardOn, setIsKeyboardOn] = useState(false);
 
   const handleOpen = () => {
     if (userRef.current) {
@@ -34,7 +34,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex py-6 justify-between items-center text-[#888888] font-normal text-[16px]">
+    <div className="flex  py-6 justify-between items-center text-[#888888] font-normal text-[16px]">
       <div className="text-[20px] text-white">TypingSpeedtest</div>
       <div className="flex justify-between gap-12 cursor-pointer py-3">
         {navItems.map((item, index) => (
@@ -58,11 +58,7 @@ const Navbar = () => {
           onClick={handleOpen}
         >
           Lakshayyy &nbsp;
-          <img
-            src="userIcon.svg"
-           
-            className="inline-block"
-          />
+          <img src="/userIcon.svg" className="inline-block" />
         </div>
         <Modal
           open={open}
@@ -97,9 +93,12 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
-            <hr className="border-[1px] border-[#4F4F4F]" />
+            <hr className="border-[0.01px]  border-[#4F4F4F]" />
             <div className="flex flex-col gap-[6px]">
-              <div className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer" onClick={() => router.push("/trial2")}>
+              <div
+                className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer"
+                onClick={() => router.push("/trial2")}
+              >
                 <div>
                   <img src="/navUser.svg" />
                 </div>
@@ -112,8 +111,37 @@ const Navbar = () => {
                 <div>Settings</div>
               </div>
             </div>
-            <hr className="border-[0.5px] border-[#4F4F4F]" />
-            <div></div>
+            <hr className="border-[0.1px] border-[#4F4F4F]" />
+            <div className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer">
+              <div>
+                <img src="/notify.svg" />
+              </div>
+              <div className=" flex justify-between w-full select-none">
+                {" "}
+                <div>Notifications</div>
+                <div
+                  className={`w-7 h-4 flex items-center ${
+                    isKeyboardOn ? "bg-[#D5E94E]" : "bg-gray-200"
+                  } rounded-full p-1 cursor-pointer`}
+                  onClick={() => setIsKeyboardOn(!isKeyboardOn)}
+                >
+                  <div
+                    className={`h-3 w-3 rounded-full shadow-md transform duration-300 ${
+                      isKeyboardOn
+                        ? "translate-x-[10.5px] bg-black"
+                        : "translate-x-[-2px] bg-black"
+                    }`}
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <hr className="border-[0.1px] border-[#4F4F4F]" />
+            <div className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer">
+                <div>
+                  <img src="/logout.svg" />
+                </div>
+                <div>Log out</div>
+              </div>
           </div>
         </Modal>
       </div>

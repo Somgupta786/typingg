@@ -13,10 +13,12 @@ import { useRouter, usePathname } from 'next/navigation';
 const Page = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.user);
   const practiseTest = useSelector((state) => state.practiseTest);
   const [chaptersData, setChaptersData] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  console.log(user.user)
 
   useEffect(() => {
     const fetchChapters = async () => {
