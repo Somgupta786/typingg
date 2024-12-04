@@ -26,7 +26,7 @@ const Navbar = () => {
     { label: "Race", path: "" },
     { label: "Practice", path: "/practise-site" },
     { label: "Leaderboard", path: "/leaderboard" },
-    { label: "Keyboard test", path: "" },
+    { label: "Keyboard test", path: "/keyboardTest" },
   ];
 
   const handleClick = (path) => {
