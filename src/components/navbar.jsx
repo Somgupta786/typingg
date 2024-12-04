@@ -97,14 +97,14 @@ const Navbar = () => {
             <div className="flex flex-col gap-[6px]">
               <div
                 className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer"
-                onClick={() => router.push("/trial2")}
+                onClick={() => router.push("/profile")}
               >
                 <div>
                   <img src="/navUser.svg" />
                 </div>
                 <div>Profile</div>
               </div>
-              <div className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer">
+              <div className="flex gap-2 hover:bg-[#2a2929] p-4 py-1 cursor-pointer" onClick={()=>router.push("/settings")}>
                 <div>
                   <img src="/settings.svg" />
                 </div>

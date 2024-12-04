@@ -13,13 +13,8 @@ import { theme2 } from "@/utils/themeCreate";
 const Page = () => {
   const router = useRouter();
   const auth = useSelector((state) => state.auth);
+  const userData = useSelector((state) => state.user);
 
-  const [formValues, setFormValues] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
   const [formErrors, setFormErrors] = useState({
     email: "",
     password: "",
@@ -27,7 +22,6 @@ const Page = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // Hardcoded categories
   const categoryList = [
     { name: "Profile Picture" },
     { name: "Account Settings" },
@@ -54,30 +48,13 @@ const Page = () => {
     setShowPassword((prev) => !prev);
   };
 
-  // Handle input change and validation
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
+  // Handle Change Email and Password
+  const handleChangeEmail = () => {
+    router.push("/settings/change-email"); // Redirect to change email page
+  };
 
-    // Validate fields
-    if (name === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      setFormErrors((prev) => ({
-        ...prev,
-        email: emailRegex.test(value) ? "" : "Invalid email format",
-      }));
-    }
-
-    if (name === "password") {
-      const passwordRegex =
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 8 chars, 1 letter, 1 number
-      setFormErrors((prev) => ({
-        ...prev,
-        password: passwordRegex.test(value)
-          ? ""
-          : "Password must be at least 8 characters and include a number",
-      }));
-    }
+  const handleChangePassword = () => {
+    router.push("/settings/change-password"); // Redirect to change password page
   };
 
   return (
@@ -112,14 +89,13 @@ const Page = () => {
                 {/* First Name Input */}
                 <TextField
                   id="outlined-first-name"
-                  label="First Name"
+                  label=""
+                  readOnly
                   variant="outlined"
                   size="medium"
                   name="firstName"
-                  value={formValues.firstName}
-                  onChange={handleInputChange}
+                  value={userData.user.username.split(" ")[0] || ""}
                   fullWidth
-                  required
                   sx={{
                     mb: "32px",
                     minWidth: "320px",
@@ -138,14 +114,13 @@ const Page = () => {
                 {/* Last Name Input */}
                 <TextField
                   id="outlined-last-name"
-                  label="Last Name"
+                  label=""
                   variant="outlined"
+                  readOnly
                   size="medium"
                   name="lastName"
-                  value={formValues.lastName}
-                  onChange={handleInputChange}
+                  value={userData.user.username.split(" ")[1] || " "}
                   fullWidth
-                  required
                   sx={{
                     mb: "32px",
                     minWidth: "320px",
@@ -169,14 +144,12 @@ const Page = () => {
                 {/* Email Input */}
                 <TextField
                   id="outlined-email"
-                  label="Email"
                   variant="outlined"
                   size="medium"
                   name="email"
-                  value={formValues.email}
-                  onChange={handleInputChange}
+                  readOnly
+                  value={userData.user.email}
                   fullWidth
-                  required
                   error={!!formErrors.email}
                   helperText={formErrors.email}
                   sx={{
@@ -193,9 +166,12 @@ const Page = () => {
                     },
                   }}
                 />
-                 <div className="px-[24px] py-[10px] w-[170px] h-10  rounded-lg border-[1px] bg-[#D5E94E] border-[#4F4F4F] whitespace-nowrap text-sm text-black font-bold cursor-pointer text-center">
-                 Change Email
-                  </div>
+                <div
+                  onClick={handleChangeEmail}
+                  className="px-[24px] py-[10px] w-[170px] h-10  rounded-lg border-[1px] bg-[#D5E94E] border-[#4F4F4F] whitespace-nowrap text-sm text-black font-bold cursor-pointer text-center"
+                >
+                  Change Email
+                </div>
               </div>
             </div>
 
@@ -207,10 +183,10 @@ const Page = () => {
                   id="outlined-password"
                   label="Password"
                   variant="outlined"
+                  readOnly
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  value={formValues.password}
-                  onChange={handleInputChange}
+                  value={userData.user?.password || "Som@7866"}
                   fullWidth
                   required
                   error={!!formErrors.password}
@@ -242,9 +218,12 @@ const Page = () => {
                     ),
                   }}
                 />
-                 <div className="px-[24px] py-[10px] w-[170px] h-10  rounded-lg border-[1px] bg-[#D5E94E] border-[#4F4F4F] whitespace-nowrap text-sm text-black font-bold cursor-pointer text-center">
-                 Change Password
-                  </div>
+                <div
+                  onClick={handleChangePassword}
+                  className=" py-[10px] w-[170px] h-10  rounded-lg border-[1px] bg-[#D5E94E] border-[#4F4F4F] whitespace-nowrap text-sm text-black font-bold cursor-pointer text-center"
+                >
+                  Change Password
+                </div>
               </div>
             </div>
           </div>

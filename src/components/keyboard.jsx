@@ -8,7 +8,7 @@ const Keyboard = () => {
   const [timer, setTimer] = useState(0); // Timer in seconds
   const [startTime, setStartTime] = useState(0); // Timer start time
   const [typedChars, setTypedChars] = useState(0); // Count of typed characters
-  const [wpm, setWpm] = useState(0); // Words per minute
+  const [wpm, setWpm] = useState("00"); // Words per minute
   const [intervalId, setIntervalId] = useState(null); // Interval ID for timer
 
   // Handle key press events
@@ -61,10 +61,10 @@ const Keyboard = () => {
         <div className="max-w-[181px] h-[182px] justify-between whitespace-normal flex flex-col p-[14px] gap-3 text-sm text-[#B0B0B0] border border-[#4F4F4F] rounded-xl">
           <div>Your real time testing speed</div>
           {/* Display WPM and Timer */}
-          <div className="text-3xl text-white">
+          <div className="text-3xl text-white whitespace-nowrap">
             {wpm} <span className="text-xl text-[#888888]">wpm</span>
           </div>
-          <div className="text-3xl text-white">
+          <div className="text-3xl text-white whitespace-nowrap">
             {timer} <span className="text-xl text-[#888888]">Seconds</span>
           </div>
         </div>

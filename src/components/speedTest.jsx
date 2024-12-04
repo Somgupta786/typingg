@@ -22,7 +22,7 @@ const SpeedTest = (props) => {
   const [wpm, setWpm] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null); // Store the end time when the test finishes
-  const [timer, setTimer] = useState(props.time); // Timer value in seconds
+  const [timer, setTimer] = useState(15); // Timer value in seconds
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
   const [totalIncorrectChars, setTotalIncorrectChars] = useState(0);
   const [extraChars, setExtraChars] = useState(0);
@@ -31,10 +31,38 @@ const SpeedTest = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isStarted, setIsStarted] = useState(false);
-  
 
   const textToType =
     "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making letters, as opposed to using 'Content here.";
+
+  useEffect(() => {
+    setTimer(props.time);
+  }, [props.time]);
+
+  useEffect(() => {
+    if (props.started) {
+      // Timer and keypresses only when started
+      if (timer > 0) {
+        const interval = setInterval(() => {
+          setTimer((prevTimer) => {
+            if (prevTimer <= 1) {
+              clearInterval(interval); // Clear the interval once timer hits 0
+              calculateResults(); // Calculate the results when time is up
+            }
+            return prevTimer - 1; // Decrease the timer
+          });
+        }, 1000);
+        return () => clearInterval(interval); // Clean up the interval on unmount or when timer changes
+      }
+    }
+  }, [props.started, timer, props.time]);
+
+  useEffect(() => {
+    // Ensure that the timer starts with a valid value from props
+    if (props.time && !startTime) {
+      setTimer(props.time); // Set the initial timer value from props
+    }
+  }, [props.time, startTime]);
 
   // Calculate metrics and navigate to results page
   const calculateResults = () => {
@@ -46,7 +74,7 @@ const SpeedTest = (props) => {
     const results = {
       wpm: Math.round(wordsTyped / timeInMinutes) || 0,
       accuracy: (accuracy * 100).toFixed(2),
-      totalTime: timer,
+      totalTime: props.time,
       totalRawWordsTyped: Math.floor(userInput.length / 5),
       totalCorrectChars,
       totalIncorrectChars,
@@ -55,7 +83,6 @@ const SpeedTest = (props) => {
     };
 
     // Dispatch the results to Redux store
-
     dispatch(setTypedWpm(results.wpm));
     dispatch(setAccuracy(results.accuracy));
     dispatch(setTotalTime(results.totalTime));
@@ -65,13 +92,16 @@ const SpeedTest = (props) => {
     dispatch(setTypedRawChars(results.totalRawWordsTyped));
     dispatch(setTypedTotalExtraChars(results.totalExtraChars));
     dispatch(setKeyStats(charMistakes));
-    router.push("/trial/results");
+    router.push("/speed-test/results");
   };
 
   // Handle key press events
   const handleKeyPress = (e) => {
+    if (!props.started) return; // Prevent key press if test hasn't started
+
     const { key } = e;
-    console.log(props);
+    if (key === "Shift" || key === "CapsLock") return;
+    
 
     const wordsTyped = Math.floor(totalCorrectChars / 5);
     const timeInMinutes = timer / 60;
@@ -146,166 +176,153 @@ const SpeedTest = (props) => {
     }
   };
 
- 
-
   // Key press listener
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress);
+    if (props.started) {
+      window.addEventListener("keydown", handleKeyPress);
+    }
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [currentCharIndex, userInput]);
-  useEffect(() => {
-    if(props.started){
-        if (timer > 0) {
-            const interval = setInterval(() => {
-              setTimer((prevTimer) => prevTimer - 1);
-            }, 1000);
-            return () => clearInterval(interval);
-          } else {
-            calculateResults();
-          }
-    }
-   
-  }, [timer]);
+  }, [props.started, currentCharIndex, userInput]);
 
   return (
     <div className="flex flex-col items-center gap-16 bg-black text-white">
-      {/* Progress tracker */}
-      <div  className={` ${!props.started ? "min-w-[800px] pt-[100px] min-h-[106px] " : "min-w-[800px] pt-[200px] min-h-[106px] "}`}>
-        <div className="relative h-1 bg-gray-700 rounded-full">
-          <div
-            className="h-1 bg-white rounded-full"
-            style={{ width: `${progress}%` }}
-          ></div>
-          <div
-            className={`absolute left-0 top-[-2px] w-2 h-2 rounded-full ${
-              progress > 0 ? "bg-white" : "bg-gray-500"
-            } transition-all duration-300`}
-            style={{ left: `calc(${progress}% - 0.225rem)` }}
-          ></div>
-          <div
-            className={`absolute left-0 top-[-100px] flex flex-col items-center rounded-full transition-all duration-300`}
-            style={{ left: `calc(${progress}% - 1.125rem)` }}
-          >
-            <div className="text-white whitespace-nowrap">{wpm} WPM</div>
-            <img src="/user.svg" alt="User Icon" />
-            <div>You</div>
-          </div>
-          <div
-            className={`absolute right-0 top-[-2px] w-2 h-2 rounded-full ${
-              progress >= 100 ? "bg-white" : "bg-gray-500"
-            } transition-all duration-300`}
-            style={{ left: `calc(100% - 0.25rem)` }}
-          ></div>
+    {/* Progress tracker */}
+    <div  className={` ${!props.started ? "min-w-[800px] pt-[100px] min-h-[106px] " : "min-w-[800px] pt-[200px] min-h-[106px] "}`}>
+      <div className="relative h-1 bg-gray-700 rounded-full">
+        <div
+          className="h-1 bg-white rounded-full"
+          style={{ width: `${progress}%` }}
+        ></div>
+        <div
+          className={`absolute left-0 top-[-2px] w-2 h-2 rounded-full ${
+            progress > 0 ? "bg-white" : "bg-gray-500"
+          } transition-all duration-300`}
+          style={{ left: `calc(${progress}% - 0.225rem)` }}
+        ></div>
+        <div
+          className={`absolute left-0 top-[-100px] flex flex-col items-center rounded-full transition-all duration-300`}
+          style={{ left: `calc(${progress}% - 1.125rem)` }}
+        >
+          <div className="text-white whitespace-nowrap">{wpm} WPM</div>
+          <img src="/user.svg" alt="User Icon" />
+          <div>You</div>
         </div>
-        <div className="flex justify-between text-sm text-gray-400 mt-2">
-          <span>Start</span>
-          <span>End</span>
-        </div>
+        <div
+          className={`absolute right-0 top-[-2px] w-2 h-2 rounded-full ${
+            progress >= 100 ? "bg-white" : "bg-gray-500"
+          } transition-all duration-300`}
+          style={{ left: `calc(100% - 0.25rem)` }}
+        ></div>
       </div>
-
-      <div className="leading-[46.5px] items-baseline text-[30px] font-normal self-start">
-        {textToType.split("").map((char, index) => (
-          <span
-            key={index}
-            className={`mr-2 ${
-              index < currentCharIndex
-                ? char === userInput[index]
-                  ? "text-white"
-                  : "text-red-500"
-                : index === currentCharIndex
-                ? "text-white border-l-2 border-white"
-                : "text-[#888888]"
-            }`}
-          >
-            {char}
-          </span>
-        ))}
+      <div className="flex justify-between text-sm text-gray-400 mt-2">
+        <span>Start</span>
+        <span>End</span>
       </div>
-      <div className={` ${!props.started ? "hidden" : ""}`}>
-        <div className=" self-center text-[#D5E94E] text-[15px]">
-          {timer}
-        </div>
-      </div>
-
-      {/* <div className="self-start mt-[200px] ">
-        <div className="text-xl min-w-[277px] flex flex-col p-6 bg-[#1A1A1A] rounded-xl text-white gap-10">
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div>Keyboard</div>
-              <div
-                className={`w-12 h-6 flex items-center ${
-                  isKeyboardOn ? "bg-[#D5E94E]" : "bg-gray-200"
-                } rounded-full p-1 cursor-pointer`}
-                onClick={() => setIsKeyboardOn(!isKeyboardOn)}
-              >
-                <div
-                  className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
-                    isKeyboardOn
-                      ? "translate-x-6 bg-black"
-                      : "translate-x-0 bg-black"
-                  }`}
-                ></div>
-              </div>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>Hands</div>
-              <div
-                className={`w-12 h-6 flex items-center ${
-                  isHandsOn ? "bg-[#D5E94E]" : "bg-gray-200"
-                } rounded-full p-1 cursor-pointer`}
-                onClick={() => setIsHandsOn(!isHandsOn)}
-              >
-                <div
-                  className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
-                    isHandsOn
-                      ? "translate-x-6 bg-black"
-                      : "translate-x-0 bg-black"
-                  }`}
-                ></div>
-              </div>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>Sound effect</div>
-              <div
-                className={`w-12 h-6 flex items-center ${
-                  isSoundEffectOn ? "bg-[#D5E94E]" : "bg-gray-200"
-                } rounded-full p-1 cursor-pointer`}
-                onClick={() => setIsSoundEffectOn(!isSoundEffectOn)}
-              >
-                <div
-                  className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
-                    isSoundEffectOn
-                      ? "translate-x-6 bg-black"
-                      : "translate-x-0 bg-black"
-                  }`}
-                ></div>
-              </div>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>Time taken</div>
-              <div className="flex items-center justify-center text-[#D5E94E]">
-                <span className="font-medium">{timer}</span>
-              </div>
-            </div>
-          </div>
-          <div className=" flex items-center gap-2 text-sm text-[#B0B0B0]">
-            <div className=" flex items-center gap-[2px]">
-              <div className="  p-2 rounded-lg border border-[#4F4F4F]">
-                Shift &nbsp;
-                <img className=" inline-block" src="/up.svg" />
-              </div>
-              <div>+</div>
-              <div className="  p-2 rounded-lg border border-[#4F4F4F]">
-                Space
-              </div>
-            </div>
-            <div>: &nbsp;Restart</div>
-          </div>
-        </div>
-      </div> */}
     </div>
+
+    <div className="leading-[46.5px] items-baseline text-[30px] font-normal self-start">
+      {textToType.split("").map((char, index) => (
+        <span
+          key={index}
+          className={`mr-2 ${
+            index < currentCharIndex
+              ? char === userInput[index]
+                ? "text-white"
+                : "text-red-500"
+              : index === currentCharIndex
+              ? "text-white border-l-2 border-white"
+              : "text-[#888888]"
+          }`}
+        >
+          {char}
+        </span>
+      ))}
+    </div>
+    <div className={` ${!props.started ? "hidden" : ""}`}>
+      <div className=" self-center text-[#D5E94E] text-[15px]">
+        {timer}
+      </div>
+    </div>
+
+    {/* <div className="self-start mt-[200px] ">
+      <div className="text-xl min-w-[277px] flex flex-col p-6 bg-[#1A1A1A] rounded-xl text-white gap-10">
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <div>Keyboard</div>
+            <div
+              className={`w-12 h-6 flex items-center ${
+                isKeyboardOn ? "bg-[#D5E94E]" : "bg-gray-200"
+              } rounded-full p-1 cursor-pointer`}
+              onClick={() => setIsKeyboardOn(!isKeyboardOn)}
+            >
+              <div
+                className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
+                  isKeyboardOn
+                    ? "translate-x-6 bg-black"
+                    : "translate-x-0 bg-black"
+                }`}
+              ></div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>Hands</div>
+            <div
+              className={`w-12 h-6 flex items-center ${
+                isHandsOn ? "bg-[#D5E94E]" : "bg-gray-200"
+              } rounded-full p-1 cursor-pointer`}
+              onClick={() => setIsHandsOn(!isHandsOn)}
+            >
+              <div
+                className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
+                  isHandsOn
+                    ? "translate-x-6 bg-black"
+                    : "translate-x-0 bg-black"
+                }`}
+              ></div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>Sound effect</div>
+            <div
+              className={`w-12 h-6 flex items-center ${
+                isSoundEffectOn ? "bg-[#D5E94E]" : "bg-gray-200"
+              } rounded-full p-1 cursor-pointer`}
+              onClick={() => setIsSoundEffectOn(!isSoundEffectOn)}
+            >
+              <div
+                className={`h-5 w-5 rounded-full shadow-md transform duration-300 ${
+                  isSoundEffectOn
+                    ? "translate-x-6 bg-black"
+                    : "translate-x-0 bg-black"
+                }`}
+              ></div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>Time taken</div>
+            <div className="flex items-center justify-center text-[#D5E94E]">
+              <span className="font-medium">{timer}</span>
+            </div>
+          </div>
+        </div>
+        <div className=" flex items-center gap-2 text-sm text-[#B0B0B0]">
+          <div className=" flex items-center gap-[2px]">
+            <div className="  p-2 rounded-lg border border-[#4F4F4F]">
+              Shift &nbsp;
+              <img className=" inline-block" src="/up.svg" />
+            </div>
+            <div>+</div>
+            <div className="  p-2 rounded-lg border border-[#4F4F4F]">
+              Space
+            </div>
+          </div>
+          <div>: &nbsp;Restart</div>
+        </div>
+      </div>
+    </div> */}
+  </div>
   );
 };
 

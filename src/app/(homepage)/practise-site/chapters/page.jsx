@@ -67,7 +67,7 @@ const Page = () => {
         </div>
       ) : (
         <div>
-          <div className="flex items-center gap-3 text-white cursor-pointer">
+          <div className="flex items-center gap-3 text-white cursor-pointer" onClick={()=>router.push("/practise-site")}>
             <FaArrowLeftLong />
             <span className="text-lg">Back to practice</span>
           </div>

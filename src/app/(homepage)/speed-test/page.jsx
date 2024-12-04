@@ -2,13 +2,15 @@
 import Navbar from "@/components/navbar";
 import SpeedTest from "@/components/speedTest";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 
 const Page = () => {
   const [selectedTime, setSelectedTime] = useState(15);
   const [getStarted, setGetStarted] = useState(false);
-
+  const auth = useSelector((state) => state.auth);
   const times = [15, 30, 60];
+  console.log(selectedTime)
 
   return (
     <div className="flex flex-col w-11/12 mx-auto select-none ">
@@ -17,6 +19,7 @@ const Page = () => {
       </div>
 
       <div className="flex flex-col gap-20">
+        
         <SpeedTest time={selectedTime} started={getStarted} />
         <div  className={` flex flex-col gap-20 ${getStarted ? "hidden" : ""}`}>
           {" "}
@@ -27,7 +30,7 @@ const Page = () => {
                 className={`border border-[#4F4F4F] p-2 rounded-2xl cursor-pointer ${
                   selectedTime === time ? "bg-[#D5E94E] text-black" : ""
                 }`}
-                onClick={() => setSelectedTime(time)}
+                onClick={() => setSelectedTime((prev)=>time)}
               >
                 {time} <span className="text-base">seconds</span>
               </div>
@@ -141,7 +144,7 @@ const Page = () => {
             <div className=" flex flex-col gap-2">
               {" "}
               <div
-                className="text-[85px] leading-[127px] italic font-medium bg-clip-text text-transparent whitespace-pre-wrap w-[80%] animate-gradient"
+                className="text-[85px] leading-[127px]  font-medium bg-clip-text text-transparent whitespace-pre-wrap w-[80%] animate-gradient"
                 style={{
                   backgroundImage: `
       linear-gradient(90deg, #E94EB6 0%, #624EE9 100%)
@@ -165,12 +168,14 @@ const Page = () => {
               <div
                 className="px-[24px] py-[12px] w-[142px] rounded-lg border-[1px] bg-[#D5E94E] border-[#4F4F4F] whitespace-nowrap text-base text-black font-bold cursor-pointer text-center"
                 onClick={() => setGetStarted(true)}
+
               >
                 Get Started
               </div>
-              <div className="px-[24px] py-[12px] w-[142px] rounded-lg border-[1px] bg-black border-[#4F4F4F] whitespace-nowrap text-base text-white font-bold cursor-pointer text-center">
+              {!auth.token&& <div className="px-[24px] py-[12px] w-[142px] rounded-lg border-[1px] bg-black border-[#4F4F4F] whitespace-nowrap text-base text-white font-bold cursor-pointer text-center">
                 Login
-              </div>
+              </div>}
+             
             </div>
           </div>
         </div>

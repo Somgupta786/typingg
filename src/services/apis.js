@@ -12,5 +12,6 @@ export const endpoints = {
   USERINFO_API: BASE_URL + "/user",
   DAILYDATA_API:  BASE_URL + "/leaderboard/daily",
   WEEKLYDATA_API:  BASE_URL + "/leaderboard/weekly",
-  MONTHLYDATA_API:  BASE_URL + "/leaderboard/monthly"
+  MONTHLYDATA_API:  BASE_URL + "/leaderboard/monthly",
+  CHANGEEMAIL_API:BASE_URL + "/user/change-email"
 };

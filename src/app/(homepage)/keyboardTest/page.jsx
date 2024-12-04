@@ -12,25 +12,6 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import "./keyboard.css";
 
-const responsive = {
-  superLargeDesktop: {
-    breakpoint: { max: 4000, min: 3000 },
-    items: 5,
-  },
-  desktop: {
-    breakpoint: { max: 3000, min: 800 },
-    items: 3,
-  },
-  tablet: {
-    breakpoint: { max: 800, min: 464 },
-    items: 2,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-  },
-};
-
 const Page = () => {
   const router = useRouter();
   const auth = useSelector((state) => state.auth);
@@ -101,48 +82,60 @@ const Page = () => {
         </div>
         <div className="text-base text-white flex flex-col gap-4">
           <div>Select your keyboard layout</div>
-          <div>
-            <Carousel
-              responsive={responsive}
-              className="bg-black w-[100vw] flex select-none px-2 relative overflow-visible"
-              draggable={true}
-              swipeable={false}
-              arrows={false}
-              itemClass="px-4"
-              focusOnSelect={true}
-            >
+
+          <div
+            className="scroll-container flex gap-6 px-2 items-center cursor-grab"
+            onMouseDown={(e) => {
+              const container = e.currentTarget;
+              container.style.cursor = "grabbing";
+              container.dataset.isDragging = "true";
+              container.dataset.startX = e.pageX;
+              container.dataset.scrollLeft = container.scrollLeft;
+            }}
+            onMouseMove={(e) => {
+              const container = e.currentTarget;
+              if (container.dataset.isDragging === "true") {
+                const startX = parseFloat(container.dataset.startX);
+                const scrollLeft = parseFloat(container.dataset.scrollLeft);
+                const diff = e.pageX - startX;
+                container.scrollLeft = scrollLeft - diff;
+              }
+            }}
+            onMouseUp={(e) => {
+              const container = e.currentTarget;
+              container.style.cursor = "grab";
+              container.dataset.isDragging = "false";
+            }}
+            onMouseLeave={(e) => {
+              const container = e.currentTarget;
+              container.style.cursor = "grab";
+              container.dataset.isDragging = "false";
+            }}
+          >
+            <div className="keyboard-container">
               {[
                 "Apple Big Keyboard",
                 "Windows Small Keyboard",
                 "Apple Small Keyboard",
                 "Apple Big Keyboard",
+                "Windows Small Keyboard",
+                "Apple Small Keyboard",
               ].map((label, index) => (
                 <div
                   key={index}
-                  className="flex flex-col w-fit group relative transition-all duration-300 ease-in-out group-hover:z-10"
+                  className="keyboard-item flex flex-col min-w-[320px] max-w-[476px] h-fit group relative cursor-pointer"
                 >
-                  <div className="flex flex-col items-center transition-transform duration-300 ease-in-out group-hover:scale-125">
-                    <img
-                      src="Magic.svg"
-                      className="transition-transform duration-300 ease-in-out brightness-75 group-hover:brightness-100"
-                      draggable="false"
-                      alt={label}
-                    />
-                    <div className="text-center transition-transform duration-300 ease-in-out group-hover:scale-110 mt-2">
-                      {label}
-                    </div>
-                  </div>
-                  <style jsx>{`
-                    .group:hover ~ .group {
-                      filter: brightness(50%);
-                      transform: scale(1);
-                    }
-                  `}</style>
+                  <img
+                    src="Magic.svg"
+                    className="w-full h-auto"
+                    draggable="false"
+                    alt={label}
+                  />
+                  <div className="text-center mt-2">{label}</div>
                 </div>
               ))}
-            </Carousel>
+            </div>
           </div>
-          
         </div>
       </div>
     </div>

@@ -6,4 +6,69 @@
     scrollbar-width: none; /* Firefox */
   }
   
+  .group {
+    position: relative;
+    overflow: visible; /* Prevent cropping when scaling */
+  }
+  
+  .group-hover:scale-125 {
+    
+    transition: transform 0.3s ease-in-out, z-index 0.3s ease-in-out;
+   
+  }
+  
+  .group img {
+    transform-origin: center; /* Ensure scaling happens from the center */
+    transition: transform 0.3s ease-in-out, brightness 0.3s ease-in-out;
+    
+  }
+  
+  .group:hover img {
+    transform: scale(1.1); /* Scale effect on hover */
+   
+  }
+  
+  .group div {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .group:hover div {
+    transform: scale(1.3); /* Slight scaling for the label */
+  }
+    
+  .scroll-container {
+    display: flex;
+    gap: 1rem; /* Space between keyboards */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden; /* Hide vertical overflow */
+    padding: 0.5rem; /* Adjust padding */
+    white-space: nowrap; /* Prevent wrapping */
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+  }
+  
+  .scroll-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Chrome, Safari, Opera */
+  }
+  
+  .keyboard-container {
+    display: flex;
+    gap: 2rem; /* Space between keyboards */
+    flex-wrap: nowrap; /* Prevent items from wrapping */
+  }
+  
+  .keyboard-item {
+    flex: 0 0 auto; /* Prevent shrinking or growing */
+    width: 100%; /* Adjust width dynamically */
+    max-width: 460px; /* Optional: Set a maximum width */
+    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+  }
+  
+  .keyboard-item img {
+    filter: brightness(0.5); /* Dim default brightness */
+  }
+  
+  .keyboard-item:hover img {
+    filter: brightness(1); /* Brighten on hover */
+  }
   

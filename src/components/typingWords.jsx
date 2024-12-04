@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import PractiseKeyboard from "./practiseKeyboard";
 import {
   setTypedWpm,
   setAccuracy,
@@ -11,7 +12,7 @@ import {
   setTypedTotalExtraChars,
   setTypedMissedChars,
   setTypedRawChars,
-  setKeyStats
+  setKeyStats,
 } from "@/features/result/resultSlice";
 import { useDispatch } from "react-redux";
 
@@ -32,11 +33,14 @@ const TypingTest = () => {
   const [isSoundEffectOn, setIsSoundEffectOn] = useState(false);
   const [missedChars, setMissedChars] = useState(0);
   const [charMistakes, setCharMistakes] = useState([]);
+  const [clickedKeys, setClickedKeys] = useState([]);
+  const [capsLock, setCapsLock] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
 
   const textToType = practiseTest?.chapters?.embedCode || "";
-  console.log(practiseTest)
+  const nextKey = textToType[currentCharIndex] || "";
+  const searchKey = textToType[currentCharIndex - 1] || "";
 
   // Calculate metrics and navigate to results page
   const calculateResults = () => {
@@ -47,7 +51,7 @@ const TypingTest = () => {
       (totalCorrectChars + totalIncorrectChars + extraChars);
     const results = {
       wpm: Math.round(wordsTyped / timeInMinutes) || 0,
-      accuracy: (accuracy * 100).toFixed(2),
+      accuracy: (accuracy * 100),
       totalTime: timer,
       totalRawWordsTyped: Math.floor(userInput.length / 5),
       totalCorrectChars,
@@ -55,12 +59,11 @@ const TypingTest = () => {
       totalExtraChars: extraChars,
       missedChars,
     };
-
-   
+console.log(results)
     // Dispatch the results to Redux store
 
     dispatch(setTypedWpm(results.wpm));
-    dispatch(setAccuracy(results.accuracy));
+    dispatch(setAccuracy(Math.round(results.accuracy * 100) / 100));
     dispatch(setTotalTime(results.totalTime));
     dispatch(setTypedTotalCorrectChars(results.totalCorrectChars));
     dispatch(setTypedTotalIncorrectChars(results.totalIncorrectChars));
@@ -74,6 +77,16 @@ const TypingTest = () => {
   // Handle key press events
   const handleKeyPress = (e) => {
     const { key } = e;
+    console.log(key);
+    if (key === "Shift" || key === "CapsLock") {
+      if(key==="CapsLock")
+      setCapsLock((prevCapsLock) => !prevCapsLock);
+
+      return;
+    }
+    const keyBoardKey = key.toUpperCase();
+
+    setClickedKeys(keyBoardKey);
 
     const wordsTyped = Math.floor(totalCorrectChars / 5);
     const timeInMinutes = timer / 60;
@@ -111,7 +124,9 @@ const TypingTest = () => {
         const char = textToType[currentCharIndex].toLowerCase();
         if (/^[a-zA-Z]$/.test(char)) {
           setCharMistakes((prevMistakes) => {
-            const existingMistake = prevMistakes.find((mistake) => mistake.key === char);
+            const existingMistake = prevMistakes.find(
+              (mistake) => mistake.key === char
+            );
             if (existingMistake) {
               // Update difficulty score
               return prevMistakes.map((mistake) =>
@@ -121,10 +136,7 @@ const TypingTest = () => {
               );
             } else {
               // Add new mistake record
-              return [
-                ...prevMistakes,
-                { key: char, difficultyScore: 1 }
-              ];
+              return [...prevMistakes, { key: char, difficultyScore: 1 }];
             }
           });
         }
@@ -165,7 +177,7 @@ const TypingTest = () => {
   }, [currentCharIndex, userInput]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center gap-16 bg-black text-white">
+    <div className=" h-full flex flex-col items-center gap-10 justify-between mb-10 bg-black text-white ">
       {/* Progress tracker */}
       <div className="min-w-[800px] pt-[140px] min-h-[106px] ">
         <div className="relative h-1 bg-gray-700 rounded-full">
@@ -200,7 +212,7 @@ const TypingTest = () => {
         </div>
       </div>
 
-      <div className="leading-[46.5px] items-baseline text-[30px] font-normal self-start">
+      <div className="leading-[46.5px] items-baseline text-[30px] font-normal self-start mt-6">
         {textToType.split("").map((char, index) => (
           <span
             key={index}
@@ -218,7 +230,7 @@ const TypingTest = () => {
           </span>
         ))}
       </div>
-      <div className="self-start mt-[200px] ">
+      <div className="self-start w-full flex gap-14 ">
         <div className="text-xl min-w-[277px] flex flex-col p-6 bg-[#1A1A1A] rounded-xl text-white gap-10">
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
@@ -293,6 +305,24 @@ const TypingTest = () => {
             <div>: &nbsp;Restart</div>
           </div>
         </div>
+        {isKeyboardOn&& <div>
+          <PractiseKeyboard
+            nextKey={nextKey.toUpperCase()}
+            clickedKey={clickedKeys}
+            searchKey={searchKey.toUpperCase()}
+          />
+        </div>}
+       
+        {capsLock && (
+          <div className=" w-full flex justify-end items-end whitespace-nowrap">
+            <div className=" flex h-[54px] px-5 py-3 gap-1 bg-[#FFFF00] text-xl text-black self-end rounded-xl">
+              <div>
+                <img src="/lock.svg" />
+              </div>
+              <div>Caps Lock</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

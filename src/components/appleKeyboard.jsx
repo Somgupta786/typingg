@@ -20,7 +20,7 @@ const AppleKeyboard = ({clickedKeys}) => {
       : "bg-[#191A1F] text-gray-400"; // Default style
   };
   return (
-    <div className="bg-[#626166] shadow-outer-custom p-2 rounded-[5.37px] max-w-[919px]">
+    <div className="bg-[#626166] shadow-outer-custom p-2 rounded-[5.37px] max-w-[1000px] min-w-[919px] w-[63.819vw]">
         {/* First Row */}
         <div className="flex  items-center justify-between">
           {[

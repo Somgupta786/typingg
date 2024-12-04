@@ -29,7 +29,7 @@ const responsive2 = {
   },
   desktop: {
     breakpoint: { max: 3000, min: 800 },
-    items: 4,
+    items: 3,
   },
   tablet: {
     breakpoint: { max: 800, min: 464 },
@@ -111,7 +111,7 @@ const Page = () => {
         </div>
       </div>
       <div
-        className="mt-[103px] text-[85px] leading-[127px] italic font-medium bg-clip-text text-transparent whitespace-pre-wrap w-[80%] animate-gradient"
+        className="mt-[103px] text-[85px] leading-[127px]  font-medium bg-clip-text text-transparent whitespace-pre-wrap w-[80%] animate-gradient"
         style={{
           backgroundImage: `
       linear-gradient(90deg, #E94EB6 0%, #624EE9 100%)
@@ -119,7 +119,7 @@ const Page = () => {
         }}
       >
         The Top Ways to Improve Your Typing{" "}
-        <span className="bg-none text-[#FFFFFF]">Speed and Accuracy</span> in
+        <span className="bg-none text-[#FFFFFF] italic">Speed and Accuracy</span> in
         Little to No Time
       </div>
       <div className=" flex flex-col mt-[68px] gap-28">
@@ -144,7 +144,7 @@ const Page = () => {
             <div className=" text-2xl text-[#B0B0B0]">Now that you know what it takes to improve your typing skill, speed, and accuracy, take the online Typing test as often as you want and need! If you're serious about becoming an even better typist, it's a good idea to practice in 30-60 minute intervals throughout the day. Try testing yourself first thing in the morning and then later in the evening, especially if you have some free time available.</div>
         </div>
         <div
-        className="text-[85px] leading-[127px] italic font-medium bg-clip-text text-transparent whitespace-pre-wrap w-[80%] animate-gradient"
+        className="text-[85px] leading-[127px]  font-medium bg-clip-text text-transparent whitespace-pre-wrap w-[80%] animate-gradient"
         style={{
           backgroundImage: `
       linear-gradient(90deg, #E94EB6 0%, #624EE9 100%)
